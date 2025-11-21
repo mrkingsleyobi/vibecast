@@ -1,0 +1,67 @@
+{
+  "version": "2.0",
+  "project": "vibecast-trading-platform",
+  "swarm": {
+    "enabled": true,
+    "agents": [
+      {
+        "id": "research-agent-1",
+        "type": "research",
+        "focus": "self-learning-trading-platforms",
+        "models": ["gemini-pro", "openrouter"],
+        "tools": ["web-search", "code-analysis", "neural-trader"],
+        "output": "plans/research/self-learning-platforms.md"
+      },
+      {
+        "id": "research-agent-2",
+        "type": "research",
+        "focus": "tradestation-integration",
+        "models": ["gemini-pro"],
+        "tools": ["api-analysis", "documentation-scraper"],
+        "output": "plans/research/tradestation-integration.md"
+      },
+      {
+        "id": "architecture-agent",
+        "type": "architect",
+        "focus": "high-speed-low-latency",
+        "models": ["openrouter"],
+        "tools": ["system-design", "performance-analysis"],
+        "output": "plans/architecture/system-design.md"
+      },
+      {
+        "id": "goal-planner-agent",
+        "type": "planner",
+        "focus": "sparc-implementation",
+        "models": ["gemini-pro", "openrouter"],
+        "tools": ["strategic-planning", "timeline-analysis"],
+        "output": "plans/sparc-design/implementation-plan.md"
+      },
+      {
+        "id": "benchmark-agent",
+        "type": "analyst",
+        "focus": "competitive-analysis",
+        "models": ["openrouter"],
+        "tools": ["benchmark-tools", "comparison-analysis"],
+        "output": "plans/benchmarks/competitive-analysis.md"
+      },
+      {
+        "id": "optimization-agent",
+        "type": "optimizer",
+        "focus": "performance-optimization",
+        "models": ["gemini-pro"],
+        "tools": ["profiler", "optimizer"],
+        "output": "plans/optimization/optimization-strategies.md"
+      }
+    ]
+  },
+  "coordination": {
+    "mode": "parallel",
+    "communication": "shared-memory",
+    "aggregation": "hierarchical"
+  },
+  "output": {
+    "format": "markdown",
+    "structure": "organized",
+    "detail_level": "comprehensive"
+  }
+}
