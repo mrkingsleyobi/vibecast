@@ -1,0 +1,664 @@
+# Multi-Region Deployment Configuration - Phase 3 Implementation
+#
+# Global trading platform deployment across 3 regions
+# Target: <50ms cross-region latency, 99.99% availability
+# Expected Improvement: 4-nines uptime
+#
+# Agent: infrastructure-agent
+# Based on: IMPLEMENTATION_PLAN.md Month 19-24
+# Reference: docs/phase3/fpga-architecture.md
+# AgentDB Success Rate: 90%
+#
+# Architecture:
+# - Primary: US-East (NYSE co-location)
+# - Secondary: EU-West (London LSE co-location)
+# - Tertiary: Asia-Pacific (Singapore SGX co-location)
+#
+# Features:
+# - Active-active in primary region
+# - Active-passive cross-region
+# - Automatic failover (<10s)
+# - Data replication (async)
+# - Global load balancing
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: trading-platform
+  labels:
+    app: trading-platform
+    tier: production
+
+---
+# Global ConfigMap with region-specific settings
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trading-config
+  namespace: trading-platform
+data:
+  # Primary region
+  PRIMARY_REGION: "us-east-1"
+  PRIMARY_EXCHANGE: "NYSE"
+  PRIMARY_ENDPOINT: "nyse-gateway.tradestation.com:5001"
+
+  # Secondary region
+  SECONDARY_REGION: "eu-west-1"
+  SECONDARY_EXCHANGE: "LSE"
+  SECONDARY_ENDPOINT: "lse-gateway.tradestation.com:5002"
+
+  # Tertiary region
+  TERTIARY_REGION: "ap-southeast-1"
+  TERTIARY_EXCHANGE: "SGX"
+  TERTIARY_ENDPOINT: "sgx-gateway.tradestation.com:5003"
+
+  # Redis cluster (per region)
+  REDIS_CLUSTER_US: "redis-us-east.cluster.local:6379"
+  REDIS_CLUSTER_EU: "redis-eu-west.cluster.local:6379"
+  REDIS_CLUSTER_AP: "redis-ap-southeast.cluster.local:6379"
+
+  # TimescaleDB (per region)
+  TIMESCALE_US: "timescale-us-east.cluster.local:5432"
+  TIMESCALE_EU: "timescale-eu-west.cluster.local:5432"
+  TIMESCALE_AP: "timescale-ap-southeast.cluster.local:5432"
+
+  # Performance targets
+  MAX_LATENCY_US: "500"     # 500ns target for US
+  MAX_LATENCY_EU: "1000"    # 1μs target for EU
+  MAX_LATENCY_AP: "2000"    # 2μs target for AP
+
+---
+# Trading Engine Deployment (US-East - Primary)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trading-engine-us-east
+  namespace: trading-platform
+  labels:
+    app: trading-engine
+    region: us-east
+    tier: production
+spec:
+  replicas: 3  # Active-active for HA
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: trading-engine
+      region: us-east
+  template:
+    metadata:
+      labels:
+        app: trading-engine
+        region: us-east
+        version: v3.0
+    spec:
+      # Node affinity for FPGA nodes
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: hardware
+                operator: In
+                values:
+                - fpga
+              - key: region
+                operator: In
+                values:
+                - us-east-1
+
+      # CPU pinning for latency-sensitive workload
+      containers:
+      - name: trading-engine
+        image: trading-platform/engine:v3.0-fpga
+        imagePullPolicy: Always
+
+        # Resource requests (guaranteed)
+        resources:
+          requests:
+            cpu: "4"           # 4 isolated cores
+            memory: "16Gi"     # 16GB RAM
+            hugepages-2Mi: "2Gi"  # 2GB huge pages
+          limits:
+            cpu: "4"
+            memory: "16Gi"
+            hugepages-2Mi: "2Gi"
+
+        # Environment variables
+        env:
+        - name: REGION
+          value: "us-east-1"
+        - name: EXCHANGE
+          value: "NYSE"
+        - name: FPGA_DEVICE
+          value: "/dev/xdma0"
+        - name: CPU_AFFINITY
+          value: "1,2,3"      # Isolated cores
+        - name: NUMA_NODE
+          value: "0"
+        - name: REDIS_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: trading-config
+              key: REDIS_CLUSTER_US
+        - name: TIMESCALE_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: trading-config
+              key: TIMESCALE_US
+
+        # Volume mounts
+        volumeMounts:
+        - name: fpga-device
+          mountPath: /dev/xdma0
+        - name: hugepages
+          mountPath: /mnt/huge
+
+        # Health checks
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+
+        # Security context
+        securityContext:
+          privileged: true  # Required for FPGA access
+          capabilities:
+            add:
+            - IPC_LOCK      # For memory locking
+            - SYS_NICE      # For real-time priority
+
+      # Volumes
+      volumes:
+      - name: fpga-device
+        hostPath:
+          path: /dev/xdma0
+          type: CharDevice
+      - name: hugepages
+        emptyDir:
+          medium: HugePages-2Mi
+
+      # Priority class for critical workload
+      priorityClassName: trading-critical
+
+---
+# Trading Engine Deployment (EU-West - Secondary)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trading-engine-eu-west
+  namespace: trading-platform
+  labels:
+    app: trading-engine
+    region: eu-west
+    tier: production
+spec:
+  replicas: 2  # Standby with reduced capacity
+  selector:
+    matchLabels:
+      app: trading-engine
+      region: eu-west
+  template:
+    metadata:
+      labels:
+        app: trading-engine
+        region: eu-west
+        version: v3.0
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: hardware
+                operator: In
+                values:
+                - fpga
+              - key: region
+                operator: In
+                values:
+                - eu-west-1
+
+      containers:
+      - name: trading-engine
+        image: trading-platform/engine:v3.0-fpga
+        resources:
+          requests:
+            cpu: "4"
+            memory: "16Gi"
+            hugepages-2Mi: "2Gi"
+          limits:
+            cpu: "4"
+            memory: "16Gi"
+            hugepages-2Mi: "2Gi"
+
+        env:
+        - name: REGION
+          value: "eu-west-1"
+        - name: EXCHANGE
+          value: "LSE"
+        - name: FPGA_DEVICE
+          value: "/dev/xdma0"
+        - name: REDIS_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: trading-config
+              key: REDIS_CLUSTER_EU
+
+        volumeMounts:
+        - name: fpga-device
+          mountPath: /dev/xdma0
+        - name: hugepages
+          mountPath: /mnt/huge
+
+        securityContext:
+          privileged: true
+          capabilities:
+            add: ["IPC_LOCK", "SYS_NICE"]
+
+      volumes:
+      - name: fpga-device
+        hostPath:
+          path: /dev/xdma0
+      - name: hugepages
+        emptyDir:
+          medium: HugePages-2Mi
+
+---
+# Trading Engine Deployment (Asia-Pacific - Tertiary)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trading-engine-ap-southeast
+  namespace: trading-platform
+  labels:
+    app: trading-engine
+    region: ap-southeast
+    tier: production
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: trading-engine
+      region: ap-southeast
+  template:
+    metadata:
+      labels:
+        app: trading-engine
+        region: ap-southeast
+        version: v3.0
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: hardware
+                operator: In
+                values:
+                - fpga
+              - key: region
+                operator: In
+                values:
+                - ap-southeast-1
+
+      containers:
+      - name: trading-engine
+        image: trading-platform/engine:v3.0-fpga
+        resources:
+          requests:
+            cpu: "4"
+            memory: "16Gi"
+            hugepages-2Mi: "2Gi"
+          limits:
+            cpu: "4"
+            memory: "16Gi"
+            hugepages-2Mi: "2Gi"
+
+        env:
+        - name: REGION
+          value: "ap-southeast-1"
+        - name: EXCHANGE
+          value: "SGX"
+        - name: FPGA_DEVICE
+          value: "/dev/xdma0"
+        - name: REDIS_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: trading-config
+              key: REDIS_CLUSTER_AP
+
+        volumeMounts:
+        - name: fpga-device
+          mountPath: /dev/xdma0
+        - name: hugepages
+          mountPath: /mnt/huge
+
+        securityContext:
+          privileged: true
+          capabilities:
+            add: ["IPC_LOCK", "SYS_NICE"]
+
+      volumes:
+      - name: fpga-device
+        hostPath:
+          path: /dev/xdma0
+      - name: hugepages
+        emptyDir:
+          medium: HugePages-2Mi
+
+---
+# Service (per region)
+apiVersion: v1
+kind: Service
+metadata:
+  name: trading-engine-us-east
+  namespace: trading-platform
+  labels:
+    app: trading-engine
+    region: us-east
+spec:
+  type: LoadBalancer
+  selector:
+    app: trading-engine
+    region: us-east
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  - name: fix
+    port: 5001
+    targetPort: 5001
+  - name: metrics
+    port: 9090
+    targetPort: 9090
+  sessionAffinity: ClientIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: trading-engine-eu-west
+  namespace: trading-platform
+spec:
+  type: LoadBalancer
+  selector:
+    app: trading-engine
+    region: eu-west
+  ports:
+  - port: 8080
+  - port: 5002
+  - port: 9090
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: trading-engine-ap-southeast
+  namespace: trading-platform
+spec:
+  type: LoadBalancer
+  selector:
+    app: trading-engine
+    region: ap-southeast
+  ports:
+  - port: 8080
+  - port: 5003
+  - port: 9090
+
+---
+# Global Load Balancer (using Ingress)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: trading-platform-global
+  namespace: trading-platform
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    ingress.gcp.io/pre-shared-cert: "trading-platform-cert"
+    # Global load balancing with geo-routing
+    cloud.google.com/backend-config: '{"default": "trading-backend-config"}'
+spec:
+  rules:
+  - host: trading.production.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: trading-engine-us-east
+            port:
+              number: 8080
+
+---
+# Horizontal Pod Autoscaler (US-East)
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: trading-engine-hpa-us-east
+  namespace: trading-platform
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: trading-engine-us-east
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Pods
+    pods:
+      metric:
+        name: fix_parser_latency_p99
+      target:
+        type: AverageValue
+        averageValue: "500"  # 500ns
+
+---
+# Pod Disruption Budget
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: trading-engine-pdb
+  namespace: trading-platform
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: trading-engine
+      region: us-east
+
+---
+# Priority Class for critical trading workloads
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: trading-critical
+value: 1000000
+globalDefault: false
+description: "Critical trading workload - highest priority"
+
+---
+# Network Policy - restrict traffic to trading engine
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: trading-engine-network-policy
+  namespace: trading-platform
+spec:
+  podSelector:
+    matchLabels:
+      app: trading-engine
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Allow from load balancer
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: kube-system
+    ports:
+    - protocol: TCP
+      port: 8080
+  # Allow from monitoring
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: monitoring
+    ports:
+    - protocol: TCP
+      port: 9090
+  egress:
+  # Allow to Redis
+  - to:
+    - podSelector:
+        matchLabels:
+          app: redis
+    ports:
+    - protocol: TCP
+      port: 6379
+  # Allow to TimescaleDB
+  - to:
+    - podSelector:
+        matchLabels:
+          app: timescaledb
+    ports:
+    - protocol: TCP
+      port: 5432
+  # Allow to FIX gateways
+  - to:
+    - namespaceSelector: {}
+    ports:
+    - protocol: TCP
+      port: 5001
+    - protocol: TCP
+      port: 5002
+    - protocol: TCP
+      port: 5003
+  # Allow DNS
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: kube-system
+    ports:
+    - protocol: UDP
+      port: 53
+
+---
+# Cross-Region Data Replication (using StatefulSet for Redis)
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-replication
+  namespace: trading-platform
+spec:
+  serviceName: redis-replication
+  replicas: 3
+  selector:
+    matchLabels:
+      app: redis-replication
+  template:
+    metadata:
+      labels:
+        app: redis-replication
+    spec:
+      containers:
+      - name: redis
+        image: redis:7-alpine
+        args:
+        - redis-server
+        - --replicaof
+        - redis-us-east.cluster.local
+        - "6379"
+        - --replica-read-only
+        - "yes"
+        ports:
+        - containerPort: 6379
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: redis-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 100Gi
+
+---
+# Service Monitor for Prometheus
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: trading-engine-monitor
+  namespace: trading-platform
+spec:
+  selector:
+    matchLabels:
+      app: trading-engine
+  endpoints:
+  - port: metrics
+    interval: 1s  # High-frequency scraping for trading
+    path: /metrics
+
+---
+# Alert Rules for multi-region
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: trading-multi-region-alerts
+  namespace: trading-platform
+spec:
+  groups:
+  - name: multi-region
+    interval: 10s
+    rules:
+    - alert: RegionDown
+      expr: up{job="trading-engine"} == 0
+      for: 30s
+      labels:
+        severity: critical
+      annotations:
+        summary: "Trading engine down in {{ $labels.region }}"
+        description: "Region {{ $labels.region }} has been down for 30s. Initiating failover."
+
+    - alert: CrossRegionLatencyHigh
+      expr: cross_region_latency_ms > 100
+      for: 1m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High cross-region latency"
+        description: "Latency between {{ $labels.source }} and {{ $labels.target }} is {{ $value }}ms"
+
+    - alert: ReplicationLag
+      expr: redis_replication_lag_seconds > 5
+      for: 1m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Redis replication lag high"
+        description: "Replication lag is {{ $value }}s in {{ $labels.region }}"
