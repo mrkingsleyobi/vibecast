@@ -1,0 +1,145 @@
+{
+  "name": "trading-platform-implementation",
+  "version": "1.0.0",
+  "description": "Multi-agent workflow for implementing trading platform",
+  "workflow": {
+    "type": "agentic-flow",
+    "mode": "parallel",
+    "agents": [
+      {
+        "id": "architecture-agent",
+        "type": "architect",
+        "role": "System Architecture Design",
+        "tasks": [
+          "Design market data ingestion pipeline",
+          "Design trading engine architecture",
+          "Design risk management system",
+          "Create component diagrams"
+        ],
+        "outputs": [
+          "src/architecture/market-data-pipeline.md",
+          "src/architecture/trading-engine.md",
+          "src/architecture/risk-management.md"
+        ],
+        "dependencies": [],
+        "priority": 1
+      },
+      {
+        "id": "backend-agent",
+        "type": "developer",
+        "role": "Backend Implementation",
+        "tasks": [
+          "Implement market data receiver (C++)",
+          "Implement FIX parser",
+          "Implement order management system",
+          "Implement position tracker"
+        ],
+        "outputs": [
+          "src/core/market_data_receiver.cpp",
+          "src/core/fix_parser.cpp",
+          "src/core/order_manager.cpp",
+          "src/core/position_tracker.cpp"
+        ],
+        "dependencies": ["architecture-agent"],
+        "priority": 2
+      },
+      {
+        "id": "integration-agent",
+        "type": "integrator",
+        "role": "TradeStation Integration",
+        "tasks": [
+          "Implement OAuth 2.0 authentication",
+          "Create REST API client",
+          "Create WebSocket streaming client",
+          "Implement rate limiting"
+        ],
+        "outputs": [
+          "src/integrations/tradestation/auth.py",
+          "src/integrations/tradestation/rest_client.py",
+          "src/integrations/tradestation/websocket_client.py"
+        ],
+        "dependencies": ["architecture-agent"],
+        "priority": 2
+      },
+      {
+        "id": "ml-agent",
+        "type": "ml-engineer",
+        "role": "ML Infrastructure",
+        "tasks": [
+          "Implement DQN agent",
+          "Create backtesting framework",
+          "Set up feature store",
+          "Create model registry"
+        ],
+        "outputs": [
+          "src/ml/agents/dqn_agent.py",
+          "src/ml/backtesting/engine.py",
+          "src/ml/features/store.py",
+          "src/ml/registry/model_registry.py"
+        ],
+        "dependencies": ["architecture-agent"],
+        "priority": 3
+      },
+      {
+        "id": "infrastructure-agent",
+        "type": "devops",
+        "role": "Infrastructure Setup",
+        "tasks": [
+          "Set up CI/CD pipeline",
+          "Configure monitoring (Prometheus/Grafana)",
+          "Set up Redis cluster",
+          "Configure TimescaleDB"
+        ],
+        "outputs": [
+          ".gitlab-ci.yml",
+          "infrastructure/monitoring/prometheus.yml",
+          "infrastructure/redis/cluster-config.yml",
+          "infrastructure/timescaledb/init.sql"
+        ],
+        "dependencies": [],
+        "priority": 1
+      },
+      {
+        "id": "testing-agent",
+        "type": "qa",
+        "role": "Testing & Validation",
+        "tasks": [
+          "Create unit test framework",
+          "Create integration tests",
+          "Create performance benchmarks",
+          "Set up AgentDB result tracking"
+        ],
+        "outputs": [
+          "tests/unit/test_framework.cpp",
+          "tests/integration/test_suite.py",
+          "tests/performance/benchmarks.cpp",
+          "tests/agentdb_tracker.py"
+        ],
+        "dependencies": ["backend-agent", "integration-agent"],
+        "priority": 3
+      }
+    ],
+    "coordination": {
+      "strategy": "dependency-based",
+      "communication": "event-driven",
+      "error_handling": "retry-with-backoff",
+      "max_retries": 3
+    }
+  },
+  "agentdb_integration": {
+    "enabled": true,
+    "track_experiments": true,
+    "track_learnings": true,
+    "update_roadmap": true,
+    "frequency": "per-task"
+  },
+  "model_routing": {
+    "primary": "claude-sonnet-3.5",
+    "fallback": "gemini-pro",
+    "task_specific": {
+      "code_generation": "claude-sonnet-3.5",
+      "architecture": "claude-opus-4",
+      "optimization": "gemini-pro"
+    }
+  }
+}
