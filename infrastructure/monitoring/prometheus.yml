@@ -1,0 +1,124 @@
+# Prometheus Configuration for Trading Platform
+# Metrics collection and monitoring
+#
+# Agent: infrastructure-agent
+# Based on: IMPLEMENTATION_PLAN.md Month 1, Week 1-2
+# Reference: plans/architecture/high-speed-low-latency.md
+
+global:
+  scrape_interval: 15s # Scrape targets every 15 seconds
+  evaluation_interval: 15s # Evaluate rules every 15 seconds
+  scrape_timeout: 10s
+
+  external_labels:
+    cluster: 'trading-platform'
+    environment: 'production'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - 'alertmanager:9093'
+
+# Load rules once and periodically evaluate them
+rule_files:
+  - 'alerts/*.yml'
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Trading platform application metrics
+  - job_name: 'trading-platform'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets:
+          - 'trading-app:8080'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        regex: '([^:]+)(:[0-9]+)?'
+        replacement: '${1}'
+
+  # Redis cluster metrics
+  - job_name: 'redis-cluster'
+    static_configs:
+      - targets:
+          - 'redis-exporter-1:9121'
+          - 'redis-exporter-2:9121'
+          - 'redis-exporter-3:9121'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: redis_instance
+        regex: 'redis-exporter-([0-9]+):.*'
+        replacement: 'master-${1}'
+
+  # PostgreSQL/TimescaleDB metrics
+  - job_name: 'timescaledb'
+    static_configs:
+      - targets:
+          - 'postgres-exporter:9187'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'timescaledb'
+
+  # Node exporter (system metrics)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets:
+          - 'node-exporter:9100'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'trading-server'
+
+  # Docker container metrics
+  - job_name: 'docker'
+    static_configs:
+      - targets:
+          - 'cadvisor:8080'
+
+  # Custom application exporters
+  - job_name: 'fix-parser'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets:
+          - 'fix-parser-exporter:9200'
+
+  - job_name: 'order-manager'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets:
+          - 'order-manager-exporter:9201'
+
+  - job_name: 'market-data'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets:
+          - 'market-data-exporter:9202'
+
+  - job_name: 'ml-agent'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets:
+          - 'ml-agent-exporter:9203'
+
+  # TradeStation integration metrics
+  - job_name: 'tradestation-integration'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets:
+          - 'tradestation-exporter:9204'
+
+# Remote write (optional - for long-term storage)
+# remote_write:
+#   - url: 'http://cortex:9009/api/prom/push'
+#     queue_config:
+#       capacity: 10000
+#       max_shards: 5
+#       max_samples_per_send: 1000

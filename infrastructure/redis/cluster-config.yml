@@ -1,0 +1,273 @@
+# Redis Cluster Configuration for Trading Platform
+# High-availability setup with 6 nodes (3 masters, 3 replicas)
+#
+# Agent: infrastructure-agent
+# Based on: IMPLEMENTATION_PLAN.md Month 1, Week 1-2
+# Reference: plans/optimization/optimization-strategies.md
+
+version: '3.8'
+
+services:
+  # Master Nodes
+  redis-master-1:
+    image: redis:7-alpine
+    container_name: trading-redis-master-1
+    command: >
+      redis-server
+      --port 7001
+      --cluster-enabled yes
+      --cluster-config-file nodes.conf
+      --cluster-node-timeout 5000
+      --appendonly yes
+      --appendfilename "appendonly.aof"
+      --dir /data
+      --maxmemory 2gb
+      --maxmemory-policy allkeys-lru
+      --tcp-backlog 511
+      --timeout 0
+      --tcp-keepalive 300
+      --loglevel notice
+      --save 900 1
+      --save 300 10
+      --save 60 10000
+    ports:
+      - "7001:7001"
+    volumes:
+      - redis-master-1-data:/data
+    networks:
+      - trading-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2.5G
+        reservations:
+          cpus: '1'
+          memory: 2G
+
+  redis-master-2:
+    image: redis:7-alpine
+    container_name: trading-redis-master-2
+    command: >
+      redis-server
+      --port 7002
+      --cluster-enabled yes
+      --cluster-config-file nodes.conf
+      --cluster-node-timeout 5000
+      --appendonly yes
+      --appendfilename "appendonly.aof"
+      --dir /data
+      --maxmemory 2gb
+      --maxmemory-policy allkeys-lru
+      --tcp-backlog 511
+      --timeout 0
+      --tcp-keepalive 300
+      --loglevel notice
+      --save 900 1
+      --save 300 10
+      --save 60 10000
+    ports:
+      - "7002:7002"
+    volumes:
+      - redis-master-2-data:/data
+    networks:
+      - trading-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2.5G
+        reservations:
+          cpus: '1'
+          memory: 2G
+
+  redis-master-3:
+    image: redis:7-alpine
+    container_name: trading-redis-master-3
+    command: >
+      redis-server
+      --port 7003
+      --cluster-enabled yes
+      --cluster-config-file nodes.conf
+      --cluster-node-timeout 5000
+      --appendonly yes
+      --appendfilename "appendonly.aof"
+      --dir /data
+      --maxmemory 2gb
+      --maxmemory-policy allkeys-lru
+      --tcp-backlog 511
+      --timeout 0
+      --tcp-keepalive 300
+      --loglevel notice
+      --save 900 1
+      --save 300 10
+      --save 60 10000
+    ports:
+      - "7003:7003"
+    volumes:
+      - redis-master-3-data:/data
+    networks:
+      - trading-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2.5G
+        reservations:
+          cpus: '1'
+          memory: 2G
+
+  # Replica Nodes
+  redis-replica-1:
+    image: redis:7-alpine
+    container_name: trading-redis-replica-1
+    command: >
+      redis-server
+      --port 7004
+      --cluster-enabled yes
+      --cluster-config-file nodes.conf
+      --cluster-node-timeout 5000
+      --appendonly yes
+      --appendfilename "appendonly.aof"
+      --dir /data
+      --maxmemory 2gb
+      --maxmemory-policy allkeys-lru
+      --tcp-backlog 511
+      --timeout 0
+      --tcp-keepalive 300
+      --loglevel notice
+      --save 900 1
+      --save 300 10
+      --save 60 10000
+    ports:
+      - "7004:7004"
+    volumes:
+      - redis-replica-1-data:/data
+    networks:
+      - trading-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1.5G
+
+  redis-replica-2:
+    image: redis:7-alpine
+    container_name: trading-redis-replica-2
+    command: >
+      redis-server
+      --port 7005
+      --cluster-enabled yes
+      --cluster-config-file nodes.conf
+      --cluster-node-timeout 5000
+      --appendonly yes
+      --appendfilename "appendonly.aof"
+      --dir /data
+      --maxmemory 2gb
+      --maxmemory-policy allkeys-lru
+      --tcp-backlog 511
+      --timeout 0
+      --tcp-keepalive 300
+      --loglevel notice
+      --save 900 1
+      --save 300 10
+      --save 60 10000
+    ports:
+      - "7005:7005"
+    volumes:
+      - redis-replica-2-data:/data
+    networks:
+      - trading-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1.5G
+
+  redis-replica-3:
+    image: redis:7-alpine
+    container_name: trading-redis-replica-3
+    command: >
+      redis-server
+      --port 7006
+      --cluster-enabled yes
+      --cluster-config-file nodes.conf
+      --cluster-node-timeout 5000
+      --appendonly yes
+      --appendfilename "appendonly.aof"
+      --dir /data
+      --maxmemory 2gb
+      --maxmemory-policy allkeys-lru
+      --tcp-backlog 511
+      --timeout 0
+      --tcp-keepalive 300
+      --loglevel notice
+      --save 900 1
+      --save 300 10
+      --save 60 10000
+    ports:
+      - "7006:7006"
+    volumes:
+      - redis-replica-3-data:/data
+    networks:
+      - trading-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1.5G
+
+  # Cluster initialization
+  redis-cluster-init:
+    image: redis:7-alpine
+    container_name: trading-redis-cluster-init
+    depends_on:
+      - redis-master-1
+      - redis-master-2
+      - redis-master-3
+      - redis-replica-1
+      - redis-replica-2
+      - redis-replica-3
+    command: >
+      sh -c "sleep 5 &&
+      redis-cli --cluster create
+      redis-master-1:7001
+      redis-master-2:7002
+      redis-master-3:7003
+      redis-replica-1:7004
+      redis-replica-2:7005
+      redis-replica-3:7006
+      --cluster-replicas 1 --cluster-yes"
+    networks:
+      - trading-network
+    restart: "no"
+
+volumes:
+  redis-master-1-data:
+  redis-master-2-data:
+  redis-master-3-data:
+  redis-replica-1-data:
+  redis-replica-2-data:
+  redis-replica-3-data:
+
+networks:
+  trading-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

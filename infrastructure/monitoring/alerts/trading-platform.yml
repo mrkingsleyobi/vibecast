@@ -1,0 +1,261 @@
+# Alert Rules for Trading Platform
+# Based on Phase 1 performance targets and AgentDB learnings
+
+groups:
+  - name: latency_alerts
+    interval: 30s
+    rules:
+      # FIX Parser latency (Target: <10μs)
+      - alert: FIXParserHighLatency
+        expr: fix_parser_p99_latency_microseconds > 10
+        for: 5m
+        labels:
+          severity: warning
+          component: fix_parser
+        annotations:
+          summary: "FIX parser P99 latency above target"
+          description: "FIX parser P99 latency is {{ $value }}μs (target: <10μs)"
+
+      - alert: FIXParserCriticalLatency
+        expr: fix_parser_p99_latency_microseconds > 20
+        for: 2m
+        labels:
+          severity: critical
+          component: fix_parser
+        annotations:
+          summary: "FIX parser P99 latency critically high"
+          description: "FIX parser P99 latency is {{ $value }}μs (2x target exceeded)"
+
+      # Order Manager latency (Target: <5μs)
+      - alert: OrderManagerHighLatency
+        expr: order_manager_p99_latency_microseconds > 5
+        for: 5m
+        labels:
+          severity: warning
+          component: order_manager
+        annotations:
+          summary: "Order manager P99 latency above target"
+          description: "Order manager P99 latency is {{ $value }}μs (target: <5μs)"
+
+      # Market Data latency (Target: <100μs)
+      - alert: MarketDataHighLatency
+        expr: market_data_p99_latency_microseconds > 100
+        for: 5m
+        labels:
+          severity: warning
+          component: market_data
+        annotations:
+          summary: "Market data P99 latency above target"
+          description: "Market data P99 latency is {{ $value }}μs (target: <100μs)"
+
+  - name: error_rate_alerts
+    interval: 30s
+    rules:
+      # FIX Parser errors
+      - alert: FIXParserHighErrorRate
+        expr: rate(fix_parser_errors_total[5m]) > 0.01
+        for: 5m
+        labels:
+          severity: warning
+          component: fix_parser
+        annotations:
+          summary: "FIX parser error rate high"
+          description: "FIX parser error rate is {{ $value }} errors/sec"
+
+      # Order Manager errors
+      - alert: OrderManagerHighErrorRate
+        expr: rate(order_manager_errors_total[5m]) > 0.01
+        for: 5m
+        labels:
+          severity: warning
+          component: order_manager
+        annotations:
+          summary: "Order manager error rate high"
+          description: "Order manager error rate is {{ $value }} errors/sec"
+
+      # TradeStation API errors
+      - alert: TradeStationAPIErrors
+        expr: rate(tradestation_api_errors_total[5m]) > 0.05
+        for: 3m
+        labels:
+          severity: warning
+          component: tradestation
+        annotations:
+          summary: "TradeStation API error rate high"
+          description: "TradeStation API error rate is {{ $value }} errors/sec"
+
+  - name: throughput_alerts
+    interval: 30s
+    rules:
+      # Market data throughput
+      - alert: MarketDataLowThroughput
+        expr: rate(market_data_messages_processed_total[1m]) < 1000
+        for: 5m
+        labels:
+          severity: warning
+          component: market_data
+        annotations:
+          summary: "Market data throughput low"
+          description: "Processing {{ $value }} messages/sec (expected >1000)"
+
+      # Orders per minute
+      - alert: OrderProcessingStalled
+        expr: rate(orders_processed_total[5m]) == 0
+        for: 10m
+        labels:
+          severity: critical
+          component: order_manager
+        annotations:
+          summary: "Order processing stalled"
+          description: "No orders processed in last 10 minutes"
+
+  - name: system_health_alerts
+    interval: 30s
+    rules:
+      # Redis cluster health
+      - alert: RedisClusterDown
+        expr: redis_up == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: redis
+        annotations:
+          summary: "Redis cluster node down"
+          description: "Redis instance {{ $labels.instance }} is down"
+
+      - alert: RedisHighMemoryUsage
+        expr: (redis_memory_used_bytes / redis_memory_max_bytes) > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          component: redis
+        annotations:
+          summary: "Redis memory usage high"
+          description: "Redis memory usage is {{ $value | humanizePercentage }}"
+
+      # TimescaleDB health
+      - alert: TimescaleDBDown
+        expr: pg_up == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: timescaledb
+        annotations:
+          summary: "TimescaleDB down"
+          description: "TimescaleDB is not responding"
+
+      - alert: TimescaleDBSlowQueries
+        expr: rate(pg_stat_activity_max_tx_duration[5m]) > 30
+        for: 5m
+        labels:
+          severity: warning
+          component: timescaledb
+        annotations:
+          summary: "TimescaleDB slow queries detected"
+          description: "Long-running queries detected ({{ $value }}s)"
+
+      # System resources
+      - alert: HighCPUUsage
+        expr: (100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)) > 80
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "High CPU usage"
+          description: "CPU usage is {{ $value }}% on {{ $labels.instance }}"
+
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "High memory usage"
+          description: "Memory usage is {{ $value | humanizePercentage }} on {{ $labels.instance }}"
+
+      - alert: DiskSpaceLow
+        expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) < 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "Low disk space"
+          description: "Disk {{ $labels.mountpoint }} has only {{ $value | humanizePercentage }} free"
+
+  - name: ml_agent_alerts
+    interval: 30s
+    rules:
+      # ML Agent win rate
+      - alert: MLAgentLowWinRate
+        expr: ml_agent_win_rate < 0.50
+        for: 1h
+        labels:
+          severity: warning
+          component: ml_agent
+        annotations:
+          summary: "ML agent win rate below 50%"
+          description: "ML agent win rate is {{ $value | humanizePercentage }} (target: 65%)"
+
+      # ML Agent inference latency
+      - alert: MLAgentHighInferenceLatency
+        expr: ml_agent_inference_latency_milliseconds > 100
+        for: 5m
+        labels:
+          severity: warning
+          component: ml_agent
+        annotations:
+          summary: "ML agent inference latency high"
+          description: "ML agent inference latency is {{ $value }}ms"
+
+  - name: trading_alerts
+    interval: 30s
+    rules:
+      # Daily loss limit
+      - alert: DailyLossLimitReached
+        expr: sum(strategy_daily_pnl) < -5000
+        for: 1m
+        labels:
+          severity: critical
+          component: risk_management
+        annotations:
+          summary: "Daily loss limit reached"
+          description: "Daily P&L is ${{ $value }} (limit: -$5000)"
+
+      # Position limit breach
+      - alert: PositionLimitBreached
+        expr: abs(position_quantity) > 1000
+        for: 1m
+        labels:
+          severity: critical
+          component: risk_management
+        annotations:
+          summary: "Position limit breached"
+          description: "Position size {{ $value }} exceeds limit (1000)"
+
+      # TradeStation rate limiting
+      - alert: TradeStationRateLimitApproaching
+        expr: rate(tradestation_api_requests_total[1m]) > 100
+        for: 2m
+        labels:
+          severity: warning
+          component: tradestation
+        annotations:
+          summary: "Approaching TradeStation rate limit"
+          description: "Request rate is {{ $value }}/min (limit: 120/min)"
+
+  - name: agentdb_alerts
+    interval: 60s
+    rules:
+      # AgentDB learning system
+      - alert: AgentDBOptimizationNeeded
+        expr: days_since_last_optimization > 7
+        for: 1h
+        labels:
+          severity: info
+          component: agentdb
+        annotations:
+          summary: "AgentDB optimization needed"
+          description: "Last optimization was {{ $value }} days ago"

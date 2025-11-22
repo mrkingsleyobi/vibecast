@@ -1,0 +1,41 @@
+# Trading Platform - Python Dependencies
+# Phase 1 Implementation
+
+# Core dependencies
+numpy>=1.24.0
+pandas>=2.0.0
+scipy>=1.10.0
+
+# Database clients
+redis>=4.5.0
+redis-py-cluster>=2.1.3
+psycopg2-binary>=2.9.0
+
+# Web frameworks and HTTP clients
+requests>=2.31.0
+websocket-client>=1.6.0
+aiohttp>=3.9.0
+
+# ML and data science
+scikit-learn>=1.3.0
+# tensorflow>=2.13.0  # Uncomment for production ML
+# torch>=2.0.0  # Alternative to TensorFlow
+
+# Monitoring and metrics
+prometheus-client>=0.17.0
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+pytest-mock>=3.11.0
+
+# Code quality
+black>=23.7.0
+flake8>=6.1.0
+pylint>=2.17.0
+mypy>=1.5.0
+
+# Utilities
+python-dotenv>=1.0.0
+pyyaml>=6.0
