@@ -1,0 +1,101 @@
+# Alertmanager Configuration for Trading Platform
+
+global:
+  resolve_timeout: 5m
+  # Slack webhook (configure in production)
+  # slack_api_url: 'https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK'
+
+# Templates for alert messages
+templates:
+  - '/etc/alertmanager/templates/*.tmpl'
+
+# Alert routing
+route:
+  group_by: ['alertname', 'cluster', 'service']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 12h
+  receiver: 'default'
+
+  routes:
+    # Critical alerts - immediate notification
+    - match:
+        severity: critical
+      receiver: 'critical-alerts'
+      group_wait: 0s
+      repeat_interval: 5m
+      continue: true
+
+    # Latency warnings
+    - match_re:
+        component: 'fix_parser|order_manager|market_data'
+      receiver: 'latency-alerts'
+      group_interval: 5m
+      repeat_interval: 30m
+
+    # System health
+    - match_re:
+        component: 'redis|timescaledb|system'
+      receiver: 'system-alerts'
+      repeat_interval: 15m
+
+    # Trading/risk alerts
+    - match:
+        component: risk_management
+      receiver: 'risk-alerts'
+      group_wait: 0s
+      repeat_interval: 1m
+
+    # ML agent alerts
+    - match:
+        component: ml_agent
+      receiver: 'ml-alerts'
+      repeat_interval: 1h
+
+# Alert receivers (notification endpoints)
+receivers:
+  - name: 'default'
+    # Default receiver (logs only)
+
+  - name: 'critical-alerts'
+    # Configure in production:
+    # - PagerDuty for on-call
+    # - Slack for team notification
+    # - Email for stakeholders
+    # slack_configs:
+    #   - channel: '#trading-critical'
+    #     title: 'CRITICAL: {{ .GroupLabels.alertname }}'
+    #     text: '{{ range .Alerts }}{{ .Annotations.description }}{{ end }}'
+
+  - name: 'latency-alerts'
+    # slack_configs:
+    #   - channel: '#trading-performance'
+
+  - name: 'system-alerts'
+    # slack_configs:
+    #   - channel: '#trading-infra'
+
+  - name: 'risk-alerts'
+    # slack_configs:
+    #   - channel: '#trading-risk'
+    #     username: 'Risk Alert Bot'
+
+  - name: 'ml-alerts'
+    # slack_configs:
+    #   - channel: '#trading-ml'
+
+# Inhibit rules (suppress certain alerts when others are firing)
+inhibit_rules:
+  # If cluster is down, don't alert on individual nodes
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['cluster', 'service']
+
+  # If system CPU is high, don't alert on individual component latency
+  - source_match:
+      alertname: 'HighCPUUsage'
+    target_match_re:
+      alertname: '.*HighLatency'
+    equal: ['instance']

@@ -1,0 +1,672 @@
+{
+  "dashboard": {
+    "title": "Trading Platform Production - Phase 3",
+    "tags": ["trading", "production", "fpga", "phase3"],
+    "timezone": "UTC",
+    "refresh": "1s",
+    "time": {
+      "from": "now-15m",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "id": 1,
+        "title": "FPGA FIX Parser Latency (P50/P95/P99)",
+        "type": "graph",
+        "gridPos": {"x": 0, "y": 0, "w": 12, "h": 8},
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(fpga_fix_parser_latency_nanoseconds_bucket[1m]))",
+            "legendFormat": "P50",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(fpga_fix_parser_latency_nanoseconds_bucket[1m]))",
+            "legendFormat": "P95",
+            "refId": "B"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(fpga_fix_parser_latency_nanoseconds_bucket[1m]))",
+            "legendFormat": "P99 (Target: <14ns)",
+            "refId": "C"
+          }
+        ],
+        "yaxes": [
+          {
+            "label": "Latency (nanoseconds)",
+            "format": "ns",
+            "logBase": 1
+          }
+        ],
+        "thresholds": [
+          {
+            "value": 14,
+            "colorMode": "critical",
+            "op": "gt",
+            "fill": true,
+            "line": true
+          }
+        ],
+        "alert": {
+          "name": "FPGA Parser Latency High",
+          "conditions": [
+            {
+              "evaluator": {
+                "params": [14],
+                "type": "gt"
+              },
+              "operator": {
+                "type": "and"
+              },
+              "query": {
+                "params": ["C", "1m", "now"]
+              },
+              "reducer": {
+                "params": [],
+                "type": "avg"
+              },
+              "type": "query"
+            }
+          ],
+          "executionErrorState": "alerting",
+          "for": "30s",
+          "frequency": "10s",
+          "message": "FPGA FIX parser P99 latency exceeded 14ns target"
+        }
+      },
+      {
+        "id": 2,
+        "title": "Order Book Update Latency (FPGA)",
+        "type": "graph",
+        "gridPos": {"x": 12, "y": 0, "w": 12, "h": 8},
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.99, rate(fpga_order_book_update_latency_nanoseconds_bucket[1m]))",
+            "legendFormat": "P99 (Target: <4ns)",
+            "refId": "A"
+          },
+          {
+            "expr": "rate(fpga_order_book_updates_total[1m])",
+            "legendFormat": "Update Rate (per sec)",
+            "refId": "B",
+            "yAxisIndex": 1
+          }
+        ],
+        "yaxes": [
+          {
+            "label": "Latency (nanoseconds)",
+            "format": "ns"
+          },
+          {
+            "label": "Updates/sec",
+            "format": "ops"
+          }
+        ],
+        "thresholds": [
+          {
+            "value": 4,
+            "colorMode": "critical"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "GPU ML Inference Latency",
+        "type": "graph",
+        "gridPos": {"x": 0, "y": 8, "w": 12, "h": 8},
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.99, rate(gpu_tensorrt_inference_latency_milliseconds_bucket[1m]))",
+            "legendFormat": "P99 (Target: <1ms)",
+            "refId": "A"
+          },
+          {
+            "expr": "rate(gpu_tensorrt_inferences_total[1m])",
+            "legendFormat": "Inference Rate",
+            "refId": "B",
+            "yAxisIndex": 1
+          }
+        ],
+        "yaxes": [
+          {
+            "label": "Latency (milliseconds)",
+            "format": "ms"
+          },
+          {
+            "label": "Inferences/sec",
+            "format": "ops"
+          }
+        ],
+        "thresholds": [
+          {
+            "value": 1,
+            "colorMode": "critical"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Trading System End-to-End Latency",
+        "type": "graph",
+        "gridPos": {"x": 12, "y": 8, "w": 12, "h": 8},
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.99, rate(trading_engine_e2e_latency_nanoseconds_bucket[1m]))",
+            "legendFormat": "Market Data → Order (P99)",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.999, rate(trading_engine_e2e_latency_nanoseconds_bucket[1m]))",
+            "legendFormat": "Market Data → Order (P99.9)",
+            "refId": "B"
+          }
+        ],
+        "yaxes": [
+          {
+            "label": "Latency (nanoseconds)",
+            "format": "ns",
+            "logBase": 10
+          }
+        ],
+        "description": "Complete latency from market data receipt to order sent (Target: <350ns)"
+      },
+      {
+        "id": 5,
+        "title": "Multi-Region Status",
+        "type": "stat",
+        "gridPos": {"x": 0, "y": 16, "w": 6, "h": 4},
+        "targets": [
+          {
+            "expr": "up{job=\"trading-engine\", region=\"us-east-1\"}",
+            "legendFormat": "US-East",
+            "refId": "A"
+          },
+          {
+            "expr": "up{job=\"trading-engine\", region=\"eu-west-1\"}",
+            "legendFormat": "EU-West",
+            "refId": "B"
+          },
+          {
+            "expr": "up{job=\"trading-engine\", region=\"ap-southeast-1\"}",
+            "legendFormat": "AP-Southeast",
+            "refId": "C"
+          }
+        ],
+        "options": {
+          "graphMode": "none",
+          "colorMode": "background",
+          "orientation": "horizontal",
+          "textMode": "value_and_name",
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"]
+          }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              {"type": "value", "options": {"1": {"text": "UP", "color": "green"}}},
+              {"type": "value", "options": {"0": {"text": "DOWN", "color": "red"}}}
+            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": 0, "color": "red"},
+                {"value": 1, "color": "green"}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 6,
+        "title": "Orders Per Second",
+        "type": "graph",
+        "gridPos": {"x": 6, "y": 16, "w": 6, "h": 4},
+        "targets": [
+          {
+            "expr": "rate(orders_sent_total[1m])",
+            "legendFormat": "Orders Sent",
+            "refId": "A"
+          },
+          {
+            "expr": "rate(orders_filled_total[1m])",
+            "legendFormat": "Orders Filled",
+            "refId": "B"
+          },
+          {
+            "expr": "rate(orders_rejected_total[1m])",
+            "legendFormat": "Orders Rejected",
+            "refId": "C"
+          }
+        ],
+        "yaxes": [
+          {
+            "label": "Orders/sec",
+            "format": "ops"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Real-time P&L",
+        "type": "graph",
+        "gridPos": {"x": 12, "y": 16, "w": 6, "h": 4},
+        "targets": [
+          {
+            "expr": "trading_account_realized_pnl_dollars",
+            "legendFormat": "Realized P&L",
+            "refId": "A"
+          },
+          {
+            "expr": "trading_account_unrealized_pnl_dollars",
+            "legendFormat": "Unrealized P&L",
+            "refId": "B"
+          },
+          {
+            "expr": "trading_account_realized_pnl_dollars + trading_account_unrealized_pnl_dollars",
+            "legendFormat": "Total P&L",
+            "refId": "C"
+          }
+        ],
+        "yaxes": [
+          {
+            "label": "P&L ($)",
+            "format": "currencyUSD"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Position Count by Symbol",
+        "type": "stat",
+        "gridPos": {"x": 18, "y": 16, "w": 6, "h": 4},
+        "targets": [
+          {
+            "expr": "count by (symbol) (trading_position_quantity)",
+            "legendFormat": "{{symbol}}",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "graphMode": "none",
+          "colorMode": "value",
+          "orientation": "vertical",
+          "textMode": "value_and_name"
+        }
+      },
+      {
+        "id": 9,
+        "title": "FPGA Resource Utilization",
+        "type": "gauge",
+        "gridPos": {"x": 0, "y": 20, "w": 8, "h": 6},
+        "targets": [
+          {
+            "expr": "fpga_lut_utilization_percent",
+            "legendFormat": "LUT Utilization",
+            "refId": "A"
+          },
+          {
+            "expr": "fpga_bram_utilization_percent",
+            "legendFormat": "BRAM Utilization",
+            "refId": "B"
+          },
+          {
+            "expr": "fpga_dsp_utilization_percent",
+            "legendFormat": "DSP Utilization",
+            "refId": "C"
+          }
+        ],
+        "options": {
+          "showThresholdLabels": true,
+          "showThresholdMarkers": true
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": 0, "color": "green"},
+                {"value": 70, "color": "yellow"},
+                {"value": 90, "color": "red"}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 10,
+        "title": "Lock-Free Queue Performance",
+        "type": "graph",
+        "gridPos": {"x": 8, "y": 20, "w": 8, "h": 6},
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.99, rate(spsc_queue_push_latency_nanoseconds_bucket[1m]))",
+            "legendFormat": "Push P99 (Target: <50ns)",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(spsc_queue_pop_latency_nanoseconds_bucket[1m]))",
+            "legendFormat": "Pop P99 (Target: <50ns)",
+            "refId": "B"
+          },
+          {
+            "expr": "spsc_queue_size",
+            "legendFormat": "Queue Size",
+            "refId": "C",
+            "yAxisIndex": 1
+          }
+        ],
+        "yaxes": [
+          {
+            "label": "Latency (ns)",
+            "format": "ns"
+          },
+          {
+            "label": "Queue Size",
+            "format": "short"
+          }
+        ],
+        "thresholds": [
+          {
+            "value": 50,
+            "colorMode": "critical"
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "title": "Memory Pool Statistics",
+        "type": "graph",
+        "gridPos": {"x": 16, "y": 20, "w": 8, "h": 6},
+        "targets": [
+          {
+            "expr": "memory_pool_allocated_blocks",
+            "legendFormat": "Allocated Blocks",
+            "refId": "A"
+          },
+          {
+            "expr": "memory_pool_available_blocks",
+            "legendFormat": "Available Blocks",
+            "refId": "B"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(memory_pool_alloc_latency_nanoseconds_bucket[1m]))",
+            "legendFormat": "Alloc P99 (Target: <10ns)",
+            "refId": "C",
+            "yAxisIndex": 1
+          }
+        ],
+        "yaxes": [
+          {
+            "label": "Blocks",
+            "format": "short"
+          },
+          {
+            "label": "Latency (ns)",
+            "format": "ns"
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "title": "Network Throughput (DPDK)",
+        "type": "graph",
+        "gridPos": {"x": 0, "y": 26, "w": 12, "h": 6},
+        "targets": [
+          {
+            "expr": "rate(dpdk_rx_packets_total[1m])",
+            "legendFormat": "RX Packets/sec",
+            "refId": "A"
+          },
+          {
+            "expr": "rate(dpdk_tx_packets_total[1m])",
+            "legendFormat": "TX Packets/sec",
+            "refId": "B"
+          },
+          {
+            "expr": "rate(dpdk_rx_bytes_total[1m]) * 8 / 1e9",
+            "legendFormat": "RX Gbps",
+            "refId": "C",
+            "yAxisIndex": 1
+          },
+          {
+            "expr": "rate(dpdk_tx_bytes_total[1m]) * 8 / 1e9",
+            "legendFormat": "TX Gbps",
+            "refId": "D",
+            "yAxisIndex": 1
+          }
+        ],
+        "yaxes": [
+          {
+            "label": "Packets/sec",
+            "format": "pps"
+          },
+          {
+            "label": "Bandwidth (Gbps)",
+            "format": "gbits"
+          }
+        ]
+      },
+      {
+        "id": 13,
+        "title": "Disaster Recovery Status",
+        "type": "stat",
+        "gridPos": {"x": 12, "y": 26, "w": 6, "h": 6},
+        "targets": [
+          {
+            "expr": "disaster_recovery_last_failover_timestamp_seconds",
+            "legendFormat": "Last Failover",
+            "refId": "A"
+          },
+          {
+            "expr": "disaster_recovery_state_replication_lag_seconds",
+            "legendFormat": "Replication Lag (Target: <1s)",
+            "refId": "B"
+          },
+          {
+            "expr": "disaster_recovery_health_check_failures_total",
+            "legendFormat": "Health Check Failures",
+            "refId": "C"
+          }
+        ],
+        "options": {
+          "graphMode": "area",
+          "colorMode": "background",
+          "textMode": "value_and_name"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": 0, "color": "green"},
+                {"value": 1, "color": "yellow"},
+                {"value": 5, "color": "red"}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 14,
+        "title": "CPU Isolation & Pinning",
+        "type": "heatmap",
+        "gridPos": {"x": 18, "y": 26, "w": 6, "h": 6},
+        "targets": [
+          {
+            "expr": "rate(node_cpu_seconds_total{mode=\"user\"}[1m]) * 100",
+            "legendFormat": "CPU {{cpu}}",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "calculate": true,
+          "calculation": {},
+          "cellGap": 2,
+          "color": {
+            "exponent": 0.5,
+            "fill": "dark-orange",
+            "mode": "scheme",
+            "reverse": false,
+            "scale": "exponential",
+            "scheme": "Spectral",
+            "steps": 128
+          },
+          "exemplars": {
+            "color": "rgba(255,0,255,0.7)"
+          }
+        },
+        "description": "CPU utilization per core (isolated cores should show high usage)"
+      },
+      {
+        "id": 15,
+        "title": "Error Rates",
+        "type": "graph",
+        "gridPos": {"x": 0, "y": 32, "w": 12, "h": 6},
+        "targets": [
+          {
+            "expr": "rate(fpga_fix_parser_checksum_errors_total[1m])",
+            "legendFormat": "FIX Checksum Errors",
+            "refId": "A"
+          },
+          {
+            "expr": "rate(order_manager_validation_errors_total[1m])",
+            "legendFormat": "Order Validation Errors",
+            "refId": "B"
+          },
+          {
+            "expr": "rate(risk_manager_rejections_total[1m])",
+            "legendFormat": "Risk Rejections",
+            "refId": "C"
+          },
+          {
+            "expr": "rate(trading_engine_errors_total[1m])",
+            "legendFormat": "Trading Engine Errors",
+            "refId": "D"
+          }
+        ],
+        "yaxes": [
+          {
+            "label": "Errors/sec",
+            "format": "ops",
+            "logBase": 10
+          }
+        ],
+        "alert": {
+          "name": "High Error Rate",
+          "conditions": [
+            {
+              "evaluator": {
+                "params": [10],
+                "type": "gt"
+              },
+              "query": {
+                "params": ["D", "1m", "now"]
+              },
+              "reducer": {
+                "type": "avg"
+              },
+              "type": "query"
+            }
+          ],
+          "frequency": "10s",
+          "message": "Trading engine error rate exceeded 10/sec"
+        }
+      },
+      {
+        "id": 16,
+        "title": "System Resource Usage",
+        "type": "graph",
+        "gridPos": {"x": 12, "y": 32, "w": 12, "h": 6},
+        "targets": [
+          {
+            "expr": "100 - (avg by (instance) (irate(node_cpu_seconds_total{mode=\"idle\"}[1m])) * 100)",
+            "legendFormat": "CPU Usage %",
+            "refId": "A"
+          },
+          {
+            "expr": "100 * (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes))",
+            "legendFormat": "Memory Usage %",
+            "refId": "B"
+          },
+          {
+            "expr": "rate(node_network_receive_bytes_total{device=\"eth0\"}[1m]) * 8 / 1e9",
+            "legendFormat": "Network RX (Gbps)",
+            "refId": "C",
+            "yAxisIndex": 1
+          }
+        ],
+        "yaxes": [
+          {
+            "label": "Usage (%)",
+            "format": "percent",
+            "max": 100
+          },
+          {
+            "label": "Network (Gbps)",
+            "format": "gbits"
+          }
+        ]
+      }
+    ],
+    "annotations": {
+      "list": [
+        {
+          "datasource": "Prometheus",
+          "enable": true,
+          "expr": "ALERTS{alertstate=\"firing\", job=\"trading-engine\"}",
+          "iconColor": "red",
+          "name": "Alerts",
+          "step": "10s",
+          "tagKeys": "alertname",
+          "textFormat": "{{alertname}}: {{instance}}",
+          "titleFormat": "Alert"
+        },
+        {
+          "datasource": "Prometheus",
+          "enable": true,
+          "expr": "changes(disaster_recovery_failover_count_total[1m]) > 0",
+          "iconColor": "orange",
+          "name": "Failover Events",
+          "titleFormat": "Failover"
+        }
+      ]
+    },
+    "templating": {
+      "list": [
+        {
+          "name": "region",
+          "type": "query",
+          "datasource": "Prometheus",
+          "query": "label_values(up{job=\"trading-engine\"}, region)",
+          "current": {
+            "text": "All",
+            "value": "$__all"
+          },
+          "multi": true,
+          "includeAll": true
+        },
+        {
+          "name": "symbol",
+          "type": "query",
+          "datasource": "Prometheus",
+          "query": "label_values(trading_position_quantity, symbol)",
+          "current": {
+            "text": "All",
+            "value": "$__all"
+          },
+          "multi": true,
+          "includeAll": true
+        }
+      ]
+    }
+  },
+  "overwrite": true,
+  "message": "Trading Platform Phase 3 - Production Dashboard",
+  "folderId": 0,
+  "folderUid": ""
+}
