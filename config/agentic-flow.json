@@ -1,0 +1,119 @@
+{
+  "name": "trustswarm-model-optimization",
+  "version": "1.0.0",
+  "description": "Multi-model optimization for TrustSwarm using Agentic Flow",
+
+  "models": {
+    "primary": "claude-sonnet-4",
+    "fallback": [
+      "gpt-4o-mini",
+      "gemini-pro",
+      "onnx-local"
+    ],
+    "costOptimization": true,
+    "autoSelection": true,
+    "selectionStrategy": "balanced"
+  },
+
+  "transport": {
+    "protocol": "quic",
+    "host": "localhost",
+    "port": 3002,
+    "speedImprovement": 0.6,
+    "enableCompression": true
+  },
+
+  "services": {
+    "openRouter": {
+      "enabled": true,
+      "apiUrl": "https://openrouter.ai/api/v1",
+      "models": [
+        "anthropic/claude-sonnet-4",
+        "openai/gpt-4o-mini",
+        "google/gemini-pro",
+        "meta-llama/llama-3-70b",
+        "mistralai/mixtral-8x7b"
+      ],
+      "costTracking": true
+    },
+    "gemini": {
+      "enabled": true,
+      "model": "gemini-pro",
+      "apiUrl": "https://generativelanguage.googleapis.com/v1",
+      "costEffective": true,
+      "maxTokens": 2048
+    },
+    "onnx": {
+      "enabled": true,
+      "device": "auto",
+      "localInference": true,
+      "modelsPath": "./models/onnx",
+      "enableCaching": true
+    }
+  },
+
+  "agentBooster": {
+    "enabled": true,
+    "speedup": 352,
+    "costReduction": 1.0,
+    "autoDetect": true,
+    "supportedTasks": [
+      "code-generation",
+      "code-editing",
+      "code-analysis"
+    ]
+  },
+
+  "mcp": {
+    "claudeFlow": {
+      "enabled": true,
+      "tools": 101
+    },
+    "flowNexus": {
+      "enabled": true,
+      "tools": 96
+    },
+    "agenticPayments": {
+      "enabled": true,
+      "tools": 10
+    }
+  },
+
+  "costOptimization": {
+    "enabled": true,
+    "maxCostPerRequest": 0.01,
+    "preferredProvider": "openrouter",
+    "fallbackOnCostLimit": true,
+    "trackingEnabled": true
+  },
+
+  "taskMapping": {
+    "simple-classification": {
+      "model": "gpt-4o-mini",
+      "maxCost": 0.001,
+      "expectedQuality": 0.88
+    },
+    "complex-reasoning": {
+      "model": "claude-sonnet-4",
+      "maxCost": 0.015,
+      "expectedQuality": 0.96
+    },
+    "code-generation": {
+      "model": "agent-booster",
+      "maxCost": 0.0,
+      "expectedQuality": 0.95
+    },
+    "fraud-analysis": {
+      "model": "gemini-pro",
+      "maxCost": 0.002,
+      "expectedQuality": 0.90
+    }
+  },
+
+  "monitoring": {
+    "enableMetrics": true,
+    "enableCostTracking": true,
+    "enableLatencyTracking": true,
+    "metricsExport": "prometheus"
+  }
+}

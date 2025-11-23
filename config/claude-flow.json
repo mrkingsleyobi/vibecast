@@ -1,0 +1,97 @@
+{
+  "name": "trustswarm-fraud-detection",
+  "version": "1.0.0",
+  "description": "TrustSwarm fraud detection using Claude Flow",
+
+  "agents": {
+    "queen": {
+      "type": "coordinator",
+      "model": "claude-sonnet-4",
+      "temperature": 0.7,
+      "maxTokens": 4096,
+      "systemPrompt": "You are the Queen coordinator for TrustSwarm fraud detection. Coordinate specialized worker agents to analyze blockchain transactions for fraud indicators."
+    },
+    "workers": [
+      {
+        "id": "sentiment-agent",
+        "type": "sentiment",
+        "model": "gpt-4o-mini",
+        "specialization": "Phishing and social engineering detection in transaction messages",
+        "confidence": 0.92,
+        "systemPrompt": "Analyze transaction memos for phishing keywords, urgency tactics, and social engineering attempts."
+      },
+      {
+        "id": "pattern-agent",
+        "type": "pattern",
+        "model": "claude-haiku",
+        "specialization": "Historical fraud pattern matching using vector similarity",
+        "confidence": 0.89,
+        "systemPrompt": "Search AgentDB for similar historical fraud patterns and assess risk based on matches."
+      },
+      {
+        "id": "ner-agent",
+        "type": "ner",
+        "model": "gpt-4o-mini",
+        "specialization": "Entity extraction, blacklist checking, and identity verification",
+        "confidence": 0.87,
+        "systemPrompt": "Extract wallet addresses, identify blacklisted entities, and verify sender/recipient identities."
+      },
+      {
+        "id": "behavioral-agent",
+        "type": "behavioral",
+        "model": "gemini-pro",
+        "specialization": "Behavioral analysis and risk profiling",
+        "confidence": 0.85,
+        "systemPrompt": "Analyze transaction patterns, historical trust scores, and behavioral risk indicators."
+      }
+    ]
+  },
+
+  "swarmMode": "hive-mind",
+
+  "memory": {
+    "type": "hybrid",
+    "path": "./data/trustswarm.db",
+    "enableReasoningBank": true,
+    "enableReflexion": true,
+    "vectorDimensions": 384,
+    "indexType": "hnsw",
+    "quantization": "binary"
+  },
+
+  "mcp": {
+    "enabled": true,
+    "transport": ["stdio", "sse"],
+    "port": 3001,
+    "tools": [
+      "trustswarm/analyze-transaction",
+      "trustswarm/get-trust-score",
+      "trustswarm/search-fraud-patterns",
+      "trustswarm/spawn-swarm",
+      "trustswarm/learn-from-feedback",
+      "trustswarm/get-stats"
+    ]
+  },
+
+  "optimization": {
+    "enableCaching": true,
+    "enableParallelization": true,
+    "maxConcurrentAgents": 4,
+    "tokenReduction": true,
+    "speedBoost": 3.5,
+    "targetSolveRate": 0.848
+  },
+
+  "thresholds": {
+    "minimumTrustScore": 300,
+    "criticalRiskThreshold": 300,
+    "highRiskThreshold": 500,
+    "mediumRiskThreshold": 700
+  },
+
+  "logging": {
+    "level": "info",
+    "enableMetrics": true,
+    "enableTracing": true
+  }
+}
