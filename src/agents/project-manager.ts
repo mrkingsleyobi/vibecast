@@ -164,7 +164,7 @@ export class ProjectManagerAgent extends BaseAgent {
       schedule: {
         status: 'ON_TRACK',
         variance: -2, // days
-        critical Path: ['Design', 'Development', 'Testing']
+        criticalPath: ['Design', 'Development', 'Testing']
       },
       issues: this.identifyIssues(),
       nextActions: this.defineNextActions()

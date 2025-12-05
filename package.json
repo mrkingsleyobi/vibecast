@@ -1,9 +1,12 @@
 {
   "name": "vibecast",
   "version": "1.0.0",
-  "description": "Weekly Vibecast Live coding sessions with mofu. Check branches for each week.",
+  "description": "High-fidelity simulation of a next-generation open DXP agency system with federated multi-agent architecture",
   "main": "index.js",
   "scripts": {
+    "start": "tsx src/index.ts",
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -16,6 +19,8 @@
   "dependencies": {
     "@ruvector/agentic-synth": "^0.1.6",
     "@ruvector/ruvllm": "^0.2.2",
+    "agent-booster": "^0.2.2",
+    "agentdb": "^1.6.1",
     "agentic-flow": "^2.0.1-alpha.5",
     "dotenv": "^17.2.3",
     "e2b": "^2.8.3",
