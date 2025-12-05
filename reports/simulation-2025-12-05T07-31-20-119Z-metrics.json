@@ -1,0 +1,45 @@
+{
+  "timestamp": "2025-12-05T07:31:20.140Z",
+  "simulation": {
+    "id": "818d8927-70f9-48a3-8e8d-654f61db2cc0",
+    "startTime": "2025-12-05T07:26:19.766Z",
+    "endTime": "2025-12-05T07:31:20.018Z",
+    "iterations": 2978
+  },
+  "performance": {
+    "throughput": 0,
+    "latency": 0,
+    "errorRate": 0,
+    "utilizationRate": 100,
+    "efficiency": 100
+  },
+  "business": {
+    "revenue": 0,
+    "growth": 0,
+    "profitMargin": 0,
+    "clientSatisfaction": 0,
+    "marketShare": 0,
+    "innovation": 0
+  },
+  "agent": {
+    "totalDecisions": 3396,
+    "decisionQuality": 100,
+    "collaborationLevel": 231.2,
+    "learningRate": 0,
+    "adaptability": 0
+  },
+  "network": {
+    "connectivity": 200,
+    "trust": 79.5,
+    "knowledgeFlow": 0,
+    "consensusEfficiency": 70,
+    "resilience": 0
+  },
+  "quality": {
+    "deliverableQuality": 0,
+    "processAdherence": 0,
+    "defectRate": 0,
+    "customerSatisfaction": 0,
+    "continuousImprovement": 0
+  }
+}

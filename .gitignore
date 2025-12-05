@@ -1,10 +1,7 @@
 node_modules/
 dist/
-.env
+.env.local
 *.log
-reports/*.json
-reports/*.md
-!reports/.gitkeep
 .DS_Store
 coverage/
 *.swp

@@ -1,0 +1,84 @@
+{
+  "iteration": 593,
+  "timestamp": "2025-12-05T07:27:19.767Z",
+  "metrics": {
+    "performance": {
+      "throughput": 0,
+      "latency": 0,
+      "errorRate": 0,
+      "utilizationRate": 100,
+      "efficiency": 100
+    },
+    "business": {
+      "revenue": 0,
+      "growth": 0,
+      "profitMargin": 0,
+      "clientSatisfaction": 0,
+      "marketShare": 0,
+      "innovation": 0
+    },
+    "agent": {
+      "totalDecisions": 649,
+      "decisionQuality": 100,
+      "collaborationLevel": 52.8,
+      "learningRate": 0,
+      "adaptability": 0
+    },
+    "network": {
+      "connectivity": 200,
+      "trust": 79.5,
+      "knowledgeFlow": 0,
+      "consensusEfficiency": 70,
+      "resilience": 0
+    },
+    "quality": {
+      "deliverableQuality": 0,
+      "processAdherence": 0,
+      "defectRate": 0,
+      "customerSatisfaction": 0,
+      "continuousImprovement": 0
+    }
+  },
+  "agentStates": [
+    {
+      "id": "515309b7-1df7-42a2-a406-3847ac20d67d",
+      "name": "Strategist-0a357484",
+      "role": "BUSINESS_STRATEGIST",
+      "status": "BUSY",
+      "workload": 53.61682248218844,
+      "tasksCompleted": 130
+    },
+    {
+      "id": "ba4db689-46a6-4d62-b1fe-a6b4c8f2d9f0",
+      "name": "Architect-d10ab698",
+      "role": "TECHNICAL_ARCHITECT",
+      "status": "IDLE",
+      "workload": 56.18513839170063,
+      "tasksCompleted": 130
+    },
+    {
+      "id": "951335c9-feb7-4a25-bb77-8b058f71eba5",
+      "name": "PM-8c822787",
+      "role": "PROJECT_MANAGER",
+      "status": "BUSY",
+      "workload": 63.20176317812768,
+      "tasksCompleted": 134
+    },
+    {
+      "id": "130c5694-ad3e-4747-8280-b59362486779",
+      "name": "Advisor-e5f94611",
+      "role": "CLIENT_ADVISOR",
+      "status": "BUSY",
+      "workload": 89.029801735634,
+      "tasksCompleted": 126
+    },
+    {
+      "id": "1f6f5ed2-53c5-432d-8517-a86e6e1abd53",
+      "name": "Ops-caa3968a",
+      "role": "OPERATIONS_MANAGER",
+      "status": "BUSY",
+      "workload": 87.32578324966806,
+      "tasksCompleted": 132
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "iteration": 2380,
+  "timestamp": "2025-12-05T07:30:19.769Z",
+  "metrics": {
+    "performance": {
+      "throughput": 0,
+      "latency": 0,
+      "errorRate": 0,
+      "utilizationRate": 40,
+      "efficiency": 70
+    },
+    "business": {
+      "revenue": 0,
+      "growth": 0,
+      "profitMargin": 0,
+      "clientSatisfaction": 0,
+      "marketShare": 0,
+      "innovation": 0
+    },
+    "agent": {
+      "totalDecisions": 2739,
+      "decisionQuality": 100,
+      "collaborationLevel": 187.6,
+      "learningRate": 0,
+      "adaptability": 0
+    },
+    "network": {
+      "connectivity": 200,
+      "trust": 79.5,
+      "knowledgeFlow": 0,
+      "consensusEfficiency": 70,
+      "resilience": 0
+    },
+    "quality": {
+      "deliverableQuality": 0,
+      "processAdherence": 0,
+      "defectRate": 0,
+      "customerSatisfaction": 0,
+      "continuousImprovement": 0
+    }
+  },
+  "agentStates": [
+    {
+      "id": "515309b7-1df7-42a2-a406-3847ac20d67d",
+      "name": "Strategist-0a357484",
+      "role": "BUSINESS_STRATEGIST",
+      "status": "BUSY",
+      "workload": 83.79833948757577,
+      "tasksCompleted": 555
+    },
+    {
+      "id": "ba4db689-46a6-4d62-b1fe-a6b4c8f2d9f0",
+      "name": "Architect-d10ab698",
+      "role": "TECHNICAL_ARCHITECT",
+      "status": "IDLE",
+      "workload": 83.32060252802864,
+      "tasksCompleted": 552
+    },
+    {
+      "id": "951335c9-feb7-4a25-bb77-8b058f71eba5",
+      "name": "PM-8c822787",
+      "role": "PROJECT_MANAGER",
+      "status": "BUSY",
+      "workload": 52.45603542864124,
+      "tasksCompleted": 565
+    },
+    {
+      "id": "130c5694-ad3e-4747-8280-b59362486779",
+      "name": "Advisor-e5f94611",
+      "role": "CLIENT_ADVISOR",
+      "status": "IDLE",
+      "workload": 51.451020706524986,
+      "tasksCompleted": 514
+    },
+    {
+      "id": "1f6f5ed2-53c5-432d-8517-a86e6e1abd53",
+      "name": "Ops-caa3968a",
+      "role": "OPERATIONS_MANAGER",
+      "status": "IDLE",
+      "workload": 85.78281465497817,
+      "tasksCompleted": 553
+    }
+  ]
+}
