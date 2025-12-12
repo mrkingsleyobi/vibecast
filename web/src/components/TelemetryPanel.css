@@ -1,0 +1,60 @@
+.telemetry-panel {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.telemetry-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.telemetry-section {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.telemetry-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #ff6b00;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.telemetry-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.telemetry-item:last-child {
+  border-bottom: none;
+}
+
+.telemetry-item.small {
+  padding: 0.25rem 0;
+}
+
+.telemetry-label {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.telemetry-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.telemetry-item.small .telemetry-label {
+  font-size: 0.75rem;
+}
+
+.telemetry-item.small .telemetry-value {
+  font-size: 0.85rem;
+}

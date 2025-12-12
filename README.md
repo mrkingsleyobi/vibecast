@@ -57,15 +57,38 @@ npm install
 
 ## Usage
 
-### Run Simulation
+### Web Application (Recommended)
+
+Start the full web interface with real-time visualization:
+
+```bash
+# Install all dependencies
+npm run setup
+
+# Run web app (backend + frontend with hot-reload)
+npm run web-app
+```
+
+Access the dashboard at `http://localhost:5173`
+
+**Features:**
+- 🎯 Real-time strategy recommendations
+- 📊 Live telemetry visualization
+- 🤖 Agent status monitoring
+- 🏁 Interactive race simulation
+- 📈 Decision tracking
+
+See [WEB_UI_GUIDE.md](./WEB_UI_GUIDE.md) for detailed web UI documentation.
+
+### Command-Line Simulation
 
 ```bash
 npm run simulate
 ```
 
-This runs a complete race simulation demonstrating the swarm system with realistic F1 race data.
+This runs a complete race simulation in the terminal with realistic F1 race data.
 
-### Start Development Server
+### Development Server
 
 ```bash
 npm run dev
@@ -284,15 +307,37 @@ import { MyAgent } from '../agents/MyAgent.js';
 - **Decision Latency**: < 500ms for full swarm consensus
 - **Scalability**: Supports 10+ concurrent agents
 
+## Web Application
+
+The system includes a modern web interface built with React and WebSocket for real-time updates.
+
+**Quick Start:**
+```bash
+npm run setup       # Install dependencies
+npm run web-app     # Start web application
+```
+
+**Features:**
+- Real-time dashboard with live updates
+- 6 specialized agent status displays
+- Interactive strategy visualizations
+- Telemetry monitoring (engine, brakes, tires, ERS)
+- WebSocket-based real-time communication
+- Responsive design with F1-inspired theme
+
+📖 See [WEB_UI_GUIDE.md](./WEB_UI_GUIDE.md) for complete web UI documentation.
+
 ## Future Enhancements
 
-- [ ] Real-time telemetry integration
+- [x] Web dashboard for visualization
+- [x] API for external integrations
+- [ ] Real-time telemetry integration via OpenF1 API
 - [ ] Machine learning model training
 - [ ] Historical race data analysis
-- [ ] API for external integrations
-- [ ] Web dashboard for visualization
+- [ ] 3D track visualization
 - [ ] Multi-race season optimization
 - [ ] Team strategy coordination
+- [ ] Race replay and analysis tools
 
 ## License
 

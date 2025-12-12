@@ -1,0 +1,140 @@
+.strategy-panel {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.consensus-header {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.consensus-badge {
+  flex: 1;
+  min-width: 120px;
+  background: rgba(225, 6, 0, 0.1);
+  border: 1px solid rgba(225, 6, 0, 0.3);
+  border-radius: 8px;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.consensus-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.consensus-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.consensus-value.confidence {
+  color: #00ff00;
+}
+
+.primary-recommendation {
+  background: rgba(102, 126, 234, 0.1);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.section-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #e10600;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.recommendation-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.recommendation-agent {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+}
+
+.recommendation-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.4;
+}
+
+.recommendation-confidence {
+  font-size: 0.85rem;
+  color: #00ff00;
+}
+
+.strategic-actions {
+  margin-bottom: 1.5rem;
+}
+
+.action-item {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-left: 3px solid #e10600;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+}
+
+.action-type {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+  background: rgba(225, 6, 0, 0.2);
+  border-radius: 4px;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #ff6b00;
+}
+
+.action-detail {
+  font-size: 0.9rem;
+  color: #ffffff;
+}
+
+.strategy-summary {
+  margin-top: 1.5rem;
+}
+
+.summary-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.summary-item {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.summary-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #ff6b00;
+}
+
+.summary-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9);
+}

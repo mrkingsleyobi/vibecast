@@ -1,0 +1,68 @@
+.dashboard {
+  min-height: 100vh;
+  padding-bottom: 2rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: auto auto auto;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  max-width: 1920px;
+  margin: 0 auto;
+}
+
+.grid-section {
+  background: rgba(26, 31, 58, 0.8);
+  border: 1px solid rgba(225, 6, 0, 0.3);
+  border-radius: 12px;
+  padding: 1.5rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.race-section {
+  grid-column: 1 / 5;
+  grid-row: 1;
+}
+
+.strategy-section {
+  grid-column: 5 / 13;
+  grid-row: 1;
+}
+
+.agents-section {
+  grid-column: 1 / 7;
+  grid-row: 2;
+}
+
+.telemetry-section {
+  grid-column: 7 / 13;
+  grid-row: 2;
+}
+
+.decisions-section {
+  grid-column: 1 / 13;
+  grid-row: 3;
+}
+
+@media (max-width: 1200px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .race-section,
+  .strategy-section,
+  .agents-section,
+  .telemetry-section,
+  .decisions-section {
+    grid-column: 1 / 7;
+  }
+
+  .race-section { grid-row: 1; }
+  .strategy-section { grid-row: 2; }
+  .agents-section { grid-row: 3; }
+  .telemetry-section { grid-row: 4; }
+  .decisions-section { grid-row: 5; }
+}
