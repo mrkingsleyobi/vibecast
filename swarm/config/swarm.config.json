@@ -1,0 +1,150 @@
+{
+  "swarm": {
+    "name": "F1StrategyOptimizerSwarm",
+    "version": "1.0.0",
+    "description": "Multi-agent swarm for optimal F1 race strategy",
+    "orchestrator": {
+      "maxConcurrentAgents": 10,
+      "communicationProtocol": "websocket",
+      "decisionThreshold": 0.75,
+      "consensusRequired": true
+    }
+  },
+  "agents": [
+    {
+      "id": "tire-strategy-agent",
+      "type": "TireStrategyAgent",
+      "priority": 1,
+      "enabled": true,
+      "config": {
+        "compoundAnalysis": true,
+        "degradationModeling": true,
+        "temperatureTracking": true,
+        "optimalWindowCalculation": true
+      }
+    },
+    {
+      "id": "fuel-strategy-agent",
+      "type": "FuelStrategyAgent",
+      "priority": 1,
+      "enabled": true,
+      "config": {
+        "fuelLoadOptimization": true,
+        "fuelSavingModes": true,
+        "weightImpactAnalysis": true
+      }
+    },
+    {
+      "id": "weather-analysis-agent",
+      "type": "WeatherAnalysisAgent",
+      "priority": 2,
+      "enabled": true,
+      "config": {
+        "realTimeData": true,
+        "probabilisticForecasting": true,
+        "trackConditionMapping": true,
+        "rainfallPrediction": true
+      }
+    },
+    {
+      "id": "pitstop-timing-agent",
+      "type": "PitStopTimingAgent",
+      "priority": 1,
+      "enabled": true,
+      "config": {
+        "windowCalculation": true,
+        "undercut/overcutAnalysis": true,
+        "safetyCarProbability": true,
+        "trafficManagement": true
+      }
+    },
+    {
+      "id": "race-simulation-agent",
+      "type": "RaceSimulationAgent",
+      "priority": 2,
+      "enabled": true,
+      "config": {
+        "monteCarlo": true,
+        "iterations": 10000,
+        "scenarioTesting": true,
+        "probabilityDistribution": true
+      }
+    },
+    {
+      "id": "competitor-analysis-agent",
+      "type": "CompetitorAnalysisAgent",
+      "priority": 2,
+      "enabled": true,
+      "config": {
+        "strategyPrediction": true,
+        "paceProfiling": true,
+        "behaviorModeling": true,
+        "historicalPatterns": true
+      }
+    },
+    {
+      "id": "track-conditions-agent",
+      "type": "TrackConditionsAgent",
+      "priority": 2,
+      "enabled": true,
+      "config": {
+        "surfaceTemperature": true,
+        "gripLevels": true,
+        "evolutionTracking": true,
+        "sectorAnalysis": true
+      }
+    },
+    {
+      "id": "telemetry-agent",
+      "type": "TelemetryAgent",
+      "priority": 1,
+      "enabled": true,
+      "config": {
+        "realTimeProcessing": true,
+        "anomalyDetection": true,
+        "performanceMetrics": true,
+        "sensorFusion": true
+      }
+    },
+    {
+      "id": "machine-learning-agent",
+      "type": "MLAgent",
+      "priority": 3,
+      "enabled": true,
+      "config": {
+        "modelType": "reinforcement-learning",
+        "continuousLearning": true,
+        "patternRecognition": true,
+        "adaptiveOptimization": true
+      }
+    }
+  ],
+  "communication": {
+    "channels": [
+      "strategy-consensus",
+      "real-time-updates",
+      "emergency-override",
+      "data-sharing"
+    ],
+    "messageBus": {
+      "type": "pub-sub",
+      "qos": 2,
+      "persistence": true
+    }
+  },
+  "optimization": {
+    "objectives": [
+      "minimize-race-time",
+      "maximize-tire-life",
+      "optimize-fuel-usage",
+      "minimize-risk",
+      "maximize-points"
+    ],
+    "constraints": [
+      "technical-regulations",
+      "safety-limits",
+      "resource-availability"
+    ],
+    "algorithm": "multi-objective-genetic-algorithm"
+  }
+}
