@@ -1,0 +1,311 @@
+# Swarm Configuration — SpacetimeDB × ruvector Fusion
+# This configuration drives the 15-agent swarm for the fusion architecture build.
+
+swarm:
+  name: vibecast-fusion-swarm
+  version: "1.0"
+  topology: hierarchical-mesh
+  max_agents: 15
+  auto_scale: true
+
+  # Coordination
+  coordination:
+    strategy: consensus
+    quorum: 8  # majority of 15
+    decision_timeout: 300s
+    conflict_resolution: queen-arbitration
+
+  # Queen Coordinator
+  queen:
+    id: Q
+    role: orchestrator
+    responsibilities:
+      - cross-context conflict resolution
+      - progress tracking and reporting
+      - phase transition decisions
+      - resource allocation
+      - ADR voting facilitation
+    tools:
+      - sparc-orchestrator
+      - swarm-coordinator
+      - adr-architect
+
+  # Agent Clusters
+  clusters:
+    core_domain:
+      lead: A1
+      agents: [A1, A2, A3, A4]
+      bounded_contexts: [storage, query_engine, subscription, integration]
+      communication: mesh (all-to-all within cluster)
+
+    support_domain:
+      lead: A5
+      agents: [A5, A6, A7]
+      bounded_contexts: [runtime, consensus, intelligence]
+      communication: mesh
+
+    cross_cutting:
+      lead: A8
+      agents: [A8, A9, A10, A11, A12, A13, A14]
+      responsibilities: [security, performance, testing, ddd, devops, docs, learning]
+      communication: broadcast
+
+  # Agent Definitions
+  agents:
+    - id: A1
+      name: storage-architect
+      context: storage
+      sparc_phases: [architecture, code, refinement]
+      skills: [adr-architect, v3-ddd-architecture, v3-core-implementation]
+      memory_namespace: storage
+      resource_limits:
+        max_files_per_session: 50
+        max_lines_per_file: 500
+
+    - id: A2
+      name: query-engine-dev
+      context: query_engine
+      sparc_phases: [code, refinement]
+      skills: [v3-core-implementation, v3-performance-optimization]
+      memory_namespace: query
+      dependencies: [A1]
+
+    - id: A3
+      name: subscription-dev
+      context: subscription
+      sparc_phases: [code, refinement]
+      skills: [v3-core-implementation, stream-chain]
+      memory_namespace: subscription
+      dependencies: [A2]
+
+    - id: A4
+      name: wire-protocol-dev
+      context: integration
+      sparc_phases: [code, refinement]
+      skills: [v3-core-implementation, v3-integration-deep]
+      memory_namespace: integration
+      dependencies: [A2]
+
+    - id: A5
+      name: runtime-engineer
+      context: runtime
+      sparc_phases: [architecture, code]
+      skills: [v3-core-implementation, v3-security-overhaul]
+      memory_namespace: runtime
+      dependencies: [A1]
+
+    - id: A6
+      name: consensus-engineer
+      context: consensus
+      sparc_phases: [architecture, code]
+      skills: [v3-core-implementation, swarm-advanced]
+      memory_namespace: consensus
+      dependencies: [A1]
+
+    - id: A7
+      name: ml-intelligence-dev
+      context: intelligence
+      sparc_phases: [code, refinement]
+      skills: [v3-core-implementation, v3-memory-unification, reasoningbank-intelligence]
+      memory_namespace: intelligence
+      dependencies: [A2, A1]
+
+    - id: A8
+      name: security-architect
+      context: security
+      sparc_phases: [all]
+      skills: [v3-security-overhaul, verification-quality]
+      memory_namespace: security
+      cross_cutting: true
+
+    - id: A9
+      name: performance-engineer
+      context: performance
+      sparc_phases: [refinement]
+      skills: [v3-performance-optimization]
+      memory_namespace: performance
+      cross_cutting: true
+
+    - id: A10
+      name: test-architect
+      context: quality
+      sparc_phases: [refinement]
+      skills: [verification-quality, v3-core-implementation]
+      memory_namespace: testing
+      cross_cutting: true
+
+    - id: A11
+      name: ddd-guardian
+      context: architecture
+      sparc_phases: [specification]
+      skills: [v3-ddd-architecture]
+      memory_namespace: architecture
+      cross_cutting: true
+
+    - id: A12
+      name: devops-engineer
+      context: deployment
+      sparc_phases: [completion]
+      skills: [github-workflow-automation, github-release-management]
+      memory_namespace: devops
+
+    - id: A13
+      name: documentation-writer
+      context: documentation
+      sparc_phases: [completion]
+      skills: [pair-programming]
+      memory_namespace: docs
+
+    - id: A14
+      name: learning-specialist
+      context: intelligence
+      sparc_phases: [all]
+      skills: [reasoningbank-intelligence, agentdb-learning, v3-memory-unification]
+      memory_namespace: learning
+      background: true
+
+  # Communication Channels
+  channels:
+    - name: architecture-decisions
+      participants: [Q, A1, A5, A6, A8, A11]
+      type: consensus
+      requires_quorum: true
+
+    - name: implementation-sync
+      participants: [A1, A2, A3, A4, A5, A6, A7]
+      type: broadcast
+      frequency: per-task
+
+    - name: security-alerts
+      participants: [Q, A8, A5, A9]
+      type: priority
+      severity: critical
+
+    - name: test-results
+      participants: [Q, A10, A1, A2, A3, A4, A5, A6, A7]
+      type: broadcast
+      frequency: continuous
+
+    - name: performance-reports
+      participants: [Q, A9, A1, A2, A7]
+      type: scheduled
+      frequency: per-milestone
+
+    - name: learning-insights
+      participants: [Q, A14, A7]
+      type: background
+      frequency: per-session
+
+  # Phase Schedule
+  phases:
+    specification:
+      weeks: [1, 2]
+      active_agents: [Q, A8, A11]
+      gate: all_adrs_accepted
+
+    pseudocode:
+      weeks: [3, 4]
+      active_agents: [Q, A1, A2, A3, A4, A5, A6, A7, A8]
+      gate: all_apis_defined
+
+    architecture:
+      weeks: [5, 6, 7, 8]
+      active_agents: [Q, A1, A2, A3, A4, A5, A6, A7, A8, A11, A12]
+      gate: all_crates_compile
+
+    refinement:
+      weeks: [9, 10, 11, 12]
+      active_agents: [Q, A1, A2, A3, A4, A5, A6, A7, A8, A9, A10]
+      gate: coverage_80_security_90
+
+    completion:
+      weeks: [13, 14]
+      active_agents: [Q, A12, A13, A14]
+      gate: release_ready
+
+  # Memory Configuration
+  memory:
+    backend: hybrid
+    namespaces:
+      - storage
+      - query
+      - subscription
+      - integration
+      - runtime
+      - consensus
+      - intelligence
+      - security
+      - performance
+      - testing
+      - architecture
+      - devops
+      - docs
+      - learning
+      - shared  # cross-context shared memory
+    hnsw:
+      enabled: true
+      M: 16
+      efConstruction: 200
+    learning:
+      reasoning_bank: enabled
+      sona: enabled
+      ewc_plus_plus: enabled
+      confidence_decay: 0.95
+
+  # Hook Integration
+  hooks:
+    session_start:
+      - restore_checkpoint
+      - load_reasoning_bank
+      - initialize_namespaces
+      - start_security_scanner
+
+    post_edit:
+      - ddd_boundary_check
+      - file_size_check
+      - secret_detection
+      - import_boundary_check
+
+    task_completed:
+      - capture_pattern
+      - update_metrics
+      - run_affected_tests
+      - check_coverage_delta
+
+    session_end:
+      - persist_checkpoint
+      - sync_reasoning_bank
+      - generate_summary
+      - final_security_audit
+
+  # Daemon Workers
+  daemons:
+    - name: audit
+      interval: 1h
+      priority: critical
+      task: scan_all_contexts_for_security_issues
+
+    - name: optimize
+      interval: 30m
+      priority: high
+      task: identify_optimization_opportunities
+
+    - name: testgaps
+      interval: 1h
+      priority: high
+      task: detect_untested_code_paths
+
+    - name: benchmark
+      interval: 4h
+      priority: normal
+      task: run_performance_regression_suite
+
+    - name: consolidate
+      interval: 2h
+      priority: low
+      task: merge_reasoning_bank_patterns
+
+    - name: map
+      interval: 30m
+      priority: high
+      task: update_dependency_graph_and_context_map
