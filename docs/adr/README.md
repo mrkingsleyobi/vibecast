@@ -1,8 +1,8 @@
-# Architecture Decision Records — VibeCast
+# Architecture Decision Records — Driftbase
 
 ## SpacetimeDB × ruvector Fusion Architecture
 
-This ADR registry tracks all architectural decisions for the VibeCast fusion database platform — a distributed, real-time vector database combining SpacetimeDB's multiplayer engine with ruvector's self-learning vector search.
+This ADR registry tracks all architectural decisions for the Driftbase fusion database platform — a distributed, real-time vector database combining SpacetimeDB's multiplayer engine with ruvector's self-learning vector search.
 
 ## ADR Index
 

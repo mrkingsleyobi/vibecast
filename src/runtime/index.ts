@@ -1,5 +1,5 @@
 /**
- * VibeCast Runtime Bounded Context — WASM Module Sandbox
+ * Driftbase Runtime Bounded Context — WASM Module Sandbox
  * Implements ADR-004: Module lifecycle, reducer execution, resource enforcement.
  * Simulates a sandboxed WASM runtime with fuel metering and resource limits.
  */

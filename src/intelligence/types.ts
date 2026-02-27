@@ -1,5 +1,5 @@
 /**
- * VibeCast Intelligence Bounded Context — Type Definitions
+ * Driftbase Intelligence Bounded Context — Type Definitions
  *
  * All enums, interfaces, and event type constants for the Intelligence domain.
  * ADR-002: DDD-compliant type separation

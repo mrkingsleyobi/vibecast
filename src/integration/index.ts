@@ -1,5 +1,5 @@
 /**
- * VibeCast Integration Bounded Context
+ * Driftbase Integration Bounded Context
  *
  * PostgreSQL wire protocol v3 compatibility layer per ADR-009.
  * Translates between PG wire protocol messages and the internal
@@ -346,7 +346,7 @@ export class WireSession {
     this._state = SessionState.Startup;
     this._txState = TransactionState.Idle;
 
-    this.parameters.set('server_version', '15.0 (VibeCast)');
+    this.parameters.set('server_version', '15.0 (Driftbase)');
     this.parameters.set('server_encoding', 'UTF8');
     this.parameters.set('client_encoding', 'UTF8');
     this.parameters.set('DateStyle', 'ISO, MDY');

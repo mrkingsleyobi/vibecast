@@ -1,5 +1,5 @@
 /**
- * VibeCast Storage Bounded Context — Arrow-native columnar storage with MVCC, WAL, event sourcing.
+ * Driftbase Storage Bounded Context — Arrow-native columnar storage with MVCC, WAL, event sourcing.
  * ADR-001: Arrow-native storage (columnar RecordBatch format)
  * ADR-002: MVCC with version chains, GC watermark, WAL with monotonic LSN
  */

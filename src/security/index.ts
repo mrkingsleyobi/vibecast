@@ -1,5 +1,5 @@
 /**
- * VibeCast Security Bounded Context
+ * Driftbase Security Bounded Context
  * Claims-based access control, authentication, and audit logging per ADR-006
  */
 import { UUID, generateId, Result, ok, err } from '../common/types.js';
@@ -27,7 +27,7 @@ export enum Operation {
   Read = 'read', Write = 'write', Delete = 'delete', Admin = 'admin',
 }
 
-const HMAC_SECRET = 'vibecast-security-hmac-key';
+const HMAC_SECRET = 'driftbase-security-hmac-key';
 const TOKEN_VERSION = 1;
 
 // ─── Interfaces ────────────────────────────────────────────

@@ -1,5 +1,5 @@
 /**
- * Tests for VibeCast Consensus Bounded Context
+ * Tests for Driftbase Consensus Bounded Context
  */
 import { describe, it, expect, beforeEach } from 'vitest';
 import {

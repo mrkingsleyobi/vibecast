@@ -1,5 +1,5 @@
 /**
- * Tests for VibeCast Common Types & Events
+ * Tests for Driftbase Common Types & Events
  */
 import { describe, it, expect, beforeEach } from 'vitest';
 import {

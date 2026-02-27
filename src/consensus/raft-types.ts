@@ -1,5 +1,5 @@
 /**
- * VibeCast Consensus — Raft Types
+ * Driftbase Consensus — Raft Types
  * Type definitions for the Raft consensus protocol.
  * Per ADR-002 / ADR-005.
  */

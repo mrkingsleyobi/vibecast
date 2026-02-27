@@ -43,7 +43,7 @@ describe('Security Shared Kernel Integration', () => {
 
     // Issue claims for storage access
     const claimsResult = security.issueClaims(principal.principalId, {
-      database: 'vibecast',
+      database: 'driftbase',
       tablePermissions: [
         { table: 'users', operations: [Operation.Read, Operation.Write] },
       ],
@@ -64,7 +64,7 @@ describe('Security Shared Kernel Integration', () => {
     const principal = createResult.value;
 
     const claimsResult = security.issueClaims(principal.principalId, {
-      database: 'vibecast',
+      database: 'driftbase',
       tablePermissions: [
         { table: '*', operations: [Operation.Read] },
       ],
@@ -104,7 +104,7 @@ describe('Security Shared Kernel Integration', () => {
 
     // Issue claims and retry
     security.issueClaims(principal.principalId, {
-      database: 'vibecast',
+      database: 'driftbase',
       tablePermissions: [{ table: 'users', operations: [Operation.Read] }],
     });
     expect(security.authorize(principal.principalId, 'users', Operation.Read)).toBe(true);
@@ -117,7 +117,7 @@ describe('Security Shared Kernel Integration', () => {
 
     security.authenticate('audit-user');
     security.issueClaims(principal.principalId, {
-      database: 'vibecast',
+      database: 'driftbase',
       tablePermissions: [{ table: 'data', operations: [Operation.Read] }],
     });
     security.authorize(principal.principalId, 'data', Operation.Read);
@@ -153,7 +153,7 @@ describe('Security Shared Kernel Integration', () => {
     const principal = createResult.value;
 
     security.issueClaims(principal.principalId, {
-      database: 'vibecast',
+      database: 'driftbase',
       tablePermissions: [{ table: 'data', operations: [Operation.Read] }],
     });
 

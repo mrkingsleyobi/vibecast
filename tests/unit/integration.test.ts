@@ -1,5 +1,5 @@
 /**
- * Tests for VibeCast Integration Bounded Context
+ * Tests for Driftbase Integration Bounded Context
  */
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
@@ -352,7 +352,7 @@ describe('WireSession', () => {
 
   it('should set default server parameters', () => {
     const session = new WireSession(generateId());
-    expect(session.parameters.get('server_version')).toContain('VibeCast');
+    expect(session.parameters.get('server_version')).toContain('Driftbase');
     expect(session.parameters.get('server_encoding')).toBe('UTF8');
   });
 

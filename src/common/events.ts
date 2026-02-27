@@ -1,5 +1,5 @@
 /**
- * VibeCast Domain Events — Event Sourcing Foundation
+ * Driftbase Domain Events — Event Sourcing Foundation
  * All state changes are captured as events per ADR-002
  */
 import { UUID, generateId, HLCTimestamp, hlcNow } from './types.js';

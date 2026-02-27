@@ -34,7 +34,7 @@ describe('Integration ↔ Query Engine Integration', () => {
     // Startup handshake
     const startupMsg: WireMessage = {
       type: WireMessageType.StartupMessage,
-      payload: { parameters: { user: 'test', database: 'vibecast' } },
+      payload: { parameters: { user: 'test', database: 'driftbase' } },
     };
     const startupResult = integration.handleMessage(session.sessionId, startupMsg);
     expect(startupResult.ok).toBe(true);

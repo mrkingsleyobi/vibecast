@@ -1,5 +1,5 @@
 /**
- * VibeCast Server — Entry Point
+ * Driftbase Server — Entry Point
  * Wires together all bounded contexts into a single-process engine
  * per ADR-001: Single-Process Architecture
  */
@@ -29,7 +29,7 @@ export const DEFAULT_CONFIG: ServerConfig = {
   raftPeers: [],
   enableLearning: true,
   enableWireProtocol: true,
-  jwtSecret: 'vibecast-dev-secret',
+  jwtSecret: 'driftbase-dev-secret',
 };
 
 // ─── Health Status ──────────────────────────────────────────
@@ -60,7 +60,7 @@ export interface ServerMetrics {
 
 // ─── Server Instance ────────────────────────────────────────
 
-export class VibeCastServer {
+export class DriftbaseServer {
   private config: ServerConfig;
   private eventBus: EventBus;
   private startTime: number;
@@ -179,6 +179,6 @@ export class VibeCastServer {
 
 // ─── Factory ────────────────────────────────────────────────
 
-export function createServer(config?: Partial<ServerConfig>): VibeCastServer {
-  return new VibeCastServer(config);
+export function createServer(config?: Partial<ServerConfig>): DriftbaseServer {
+  return new DriftbaseServer(config);
 }

@@ -1,5 +1,5 @@
 /**
- * VibeCast — Real-Time Reactive Vector Database
+ * Driftbase — Real-Time Reactive Vector Database
  * SpacetimeDB × ruvector Fusion Architecture
  *
  * A distributed, real-time vector database that pushes semantic

@@ -347,7 +347,7 @@ WireSession (Aggregate Root)
 ├── ProtocolVersion: u32 (PostgreSQL v3 = 196608)
 ├── Parameters: HashMap<String, String>
 │   ├── client_encoding: UTF8
-│   ├── server_version: "vibecast-1.0"
+│   ├── server_version: "driftbase-1.0"
 │   ├── standard_conforming_strings: "on"
 │   └── application_name: String
 ├── State: { Startup | Authenticated | Ready | InQuery | InCopy | Closing }

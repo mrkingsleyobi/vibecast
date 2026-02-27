@@ -1,5 +1,5 @@
 /**
- * VibeCast Query — HNSW Vector Index
+ * Driftbase Query — HNSW Vector Index
  * Hierarchical Navigable Small World graph for approximate nearest neighbor search.
  * ADR-001: sub-100us vector search target for 1M vectors.
  * ADR-002: Split from monolithic query module into DDD-compliant submodule.

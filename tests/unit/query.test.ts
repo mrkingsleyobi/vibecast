@@ -1,5 +1,5 @@
 /**
- * Tests for VibeCast Query Engine Bounded Context
+ * Tests for Driftbase Query Engine Bounded Context
  */
 import { describe, it, expect, beforeEach } from 'vitest';
 import {

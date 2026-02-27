@@ -1,5 +1,5 @@
 /**
- * VibeCast Query — SQL Parser
+ * Driftbase Query — SQL Parser
  * SQL AST types and parser for SELECT, INSERT, UPDATE, DELETE, CREATE TABLE,
  * and VECTOR_SEARCH statements.
  * ADR-002: Split from monolithic query module into DDD-compliant submodule.

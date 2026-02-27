@@ -1,5 +1,5 @@
 /**
- * VibeCast Intelligence Bounded Context
+ * Driftbase Intelligence Bounded Context
  *
  * Implements embedding generation, GNN-enhanced search, and self-learning
  * with EWC++ (Elastic Weight Consolidation) to prevent catastrophic forgetting.

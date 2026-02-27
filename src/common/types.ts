@@ -1,5 +1,5 @@
 /**
- * VibeCast Common Types — Shared Kernel
+ * Driftbase Common Types — Shared Kernel
  * Used across all bounded contexts per ADR-002
  */
 import { randomUUID } from 'crypto';

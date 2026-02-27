@@ -1,5 +1,5 @@
 /**
- * VibeCast Consensus — ConsensusEngine Service
+ * Driftbase Consensus — ConsensusEngine Service
  * Orchestrates Raft (strong consistency) and CRDT (eventual consistency).
  * Per ADR-002 / ADR-005.
  */

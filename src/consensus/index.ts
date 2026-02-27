@@ -1,5 +1,5 @@
 /**
- * VibeCast Consensus Bounded Context
+ * Driftbase Consensus Bounded Context
  * Hybrid consensus: Raft for strong consistency (OLTP writes),
  * CRDT for eventual consistency (vector index propagation).
  * Per ADR-005.

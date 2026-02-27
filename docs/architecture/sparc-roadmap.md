@@ -119,21 +119,21 @@ Week 7-8:
 ### Cargo Workspace Layout
 
 ```
-vibecast/
+driftbase/
 ├── Cargo.toml                 (workspace root)
 ├── crates/
-│   ├── vibecast-storage/      (Storage context)
-│   ├── vibecast-query/        (Query Engine context)
-│   ├── vibecast-subscription/ (Subscription context)
-│   ├── vibecast-runtime/      (Runtime context)
-│   ├── vibecast-consensus/    (Consensus context)
-│   ├── vibecast-intelligence/ (Intelligence context)
-│   ├── vibecast-security/     (Security context)
-│   ├── vibecast-integration/  (Integration context)
-│   ├── vibecast-server/       (Binary entry point)
-│   └── vibecast-common/       (Shared types, minimal)
+│   ├── driftbase-storage/      (Storage context)
+│   ├── driftbase-query/        (Query Engine context)
+│   ├── driftbase-subscription/ (Subscription context)
+│   ├── driftbase-runtime/      (Runtime context)
+│   ├── driftbase-consensus/    (Consensus context)
+│   ├── driftbase-intelligence/ (Intelligence context)
+│   ├── driftbase-security/     (Security context)
+│   ├── driftbase-integration/  (Integration context)
+│   ├── driftbase-server/       (Binary entry point)
+│   └── driftbase-common/       (Shared types, minimal)
 ├── bindings/
-│   └── vibecast-napi/         (Node.js bindings via napi-rs)
+│   └── driftbase-napi/         (Node.js bindings via napi-rs)
 ├── tests/
 │   ├── integration/           (Cross-context integration tests)
 │   └── benchmarks/            (Criterion benchmarks)

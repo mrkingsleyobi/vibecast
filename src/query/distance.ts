@@ -1,5 +1,5 @@
 /**
- * VibeCast Query — Distance Functions
+ * Driftbase Query — Distance Functions
  * Implements cosine, L2, and inner product distance metrics for vector search.
  * ADR-002: Split from monolithic query module into DDD-compliant submodule.
  */

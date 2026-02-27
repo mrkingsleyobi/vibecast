@@ -41,7 +41,7 @@ export class WireSession {
     this._state = SessionState.Startup;
     this._txState = TransactionState.Idle;
 
-    this.parameters.set('server_version', '15.0 (VibeCast)');
+    this.parameters.set('server_version', '15.0 (Driftbase)');
     this.parameters.set('server_encoding', 'UTF8');
     this.parameters.set('client_encoding', 'UTF8');
     this.parameters.set('DateStyle', 'ISO, MDY');

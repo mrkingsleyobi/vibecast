@@ -1,5 +1,5 @@
 /**
- * VibeCast Intelligence Bounded Context — EmbeddingModel Aggregate Root
+ * Driftbase Intelligence Bounded Context — EmbeddingModel Aggregate Root
  *
  * Contains the EmbeddingModel aggregate root along with its supporting
  * hash-based embedding utilities (hashTextToVector, simpleHash).

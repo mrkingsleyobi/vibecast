@@ -1,5 +1,5 @@
 /**
- * Tests for VibeCast Subscription Bounded Context
+ * Tests for Driftbase Subscription Bounded Context
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import {

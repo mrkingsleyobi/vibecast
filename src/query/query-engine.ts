@@ -1,5 +1,5 @@
 /**
- * VibeCast Query — QueryEngine Domain Service
+ * Driftbase Query — QueryEngine Domain Service
  * Executes SQL query plans against in-memory table stores and vector indexes.
  * ADR-002: Split from monolithic query module into DDD-compliant submodule.
  * ADR-003: Hybrid queries combining vector search with relational filters.

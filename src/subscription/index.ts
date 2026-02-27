@@ -1,5 +1,5 @@
 /**
- * VibeCast Subscription Bounded Context
+ * Driftbase Subscription Bounded Context
  *
  * Reactive vector subscriptions: clients subscribe to "top-k similar"
  * queries and receive push updates when index changes affect their

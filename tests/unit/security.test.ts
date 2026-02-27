@@ -1,5 +1,5 @@
 /**
- * Tests for VibeCast Security Bounded Context
+ * Tests for Driftbase Security Bounded Context
  */
 import { describe, it, expect, beforeEach } from 'vitest';
 import {

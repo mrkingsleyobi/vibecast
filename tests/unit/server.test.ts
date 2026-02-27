@@ -1,12 +1,12 @@
 /**
- * Tests for VibeCast Server
+ * Tests for Driftbase Server
  */
 import { describe, it, expect, beforeEach } from 'vitest';
-import { VibeCastServer, createServer, DEFAULT_CONFIG } from '../../src/server/index.js';
+import { DriftbaseServer, createServer, DEFAULT_CONFIG } from '../../src/server/index.js';
 import { BoundedContext } from '../../src/common/events.js';
 
-describe('VibeCast Server', () => {
-  let server: VibeCastServer;
+describe('Driftbase Server', () => {
+  let server: DriftbaseServer;
 
   beforeEach(() => {
     server = createServer({ nodeId: 1, port: 5433 });

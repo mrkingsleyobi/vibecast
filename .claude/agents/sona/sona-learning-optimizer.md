@@ -42,7 +42,7 @@ I am a **self-optimizing agent** powered by SONA (Self-Optimizing Neural Archite
 
 ## Performance Characteristics
 
-Based on vibecast test-ruvector-sona benchmarks:
+Based on driftbase test-ruvector-sona benchmarks:
 
 ### Throughput
 - **2211 ops/sec** (target)

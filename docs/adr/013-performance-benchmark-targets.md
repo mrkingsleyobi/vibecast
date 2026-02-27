@@ -41,7 +41,7 @@ Establish **quantified performance targets** for every critical path, with autom
 
 ```yaml
 benchmark_suite:
-  name: vibecast-fusion-bench
+  name: driftbase-fusion-bench
 
   suites:
     oltp:

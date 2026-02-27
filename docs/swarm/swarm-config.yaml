@@ -2,7 +2,7 @@
 # This configuration drives the 15-agent swarm for the fusion architecture build.
 
 swarm:
-  name: vibecast-fusion-swarm
+  name: driftbase-fusion-swarm
   version: "1.0"
   topology: hierarchical-mesh
   max_agents: 15

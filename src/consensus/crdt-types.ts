@@ -1,5 +1,5 @@
 /**
- * VibeCast Consensus — CRDT Types
+ * Driftbase Consensus — CRDT Types
  * Type definitions for Conflict-free Replicated Data Types.
  * Per ADR-002 / ADR-005.
  */

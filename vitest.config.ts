@@ -21,7 +21,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@vibecast': path.resolve(__dirname, 'src'),
+      '@driftbase': path.resolve(__dirname, 'src'),
     },
   },
 });

@@ -1,5 +1,5 @@
 /**
- * VibeCast Consensus — RaftNode Aggregate Root
+ * Driftbase Consensus — RaftNode Aggregate Root
  * Implements the Raft consensus algorithm for strong consistency.
  * Per ADR-002 / ADR-005.
  */

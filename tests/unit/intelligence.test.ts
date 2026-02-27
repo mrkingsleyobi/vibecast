@@ -1,5 +1,5 @@
 /**
- * Tests for VibeCast Intelligence Bounded Context
+ * Tests for Driftbase Intelligence Bounded Context
  */
 import { describe, it, expect, beforeEach } from 'vitest';
 import {

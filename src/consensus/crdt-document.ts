@@ -1,5 +1,5 @@
 /**
- * VibeCast Consensus — CRDTDocument Aggregate Root
+ * Driftbase Consensus — CRDTDocument Aggregate Root
  * Manages Conflict-free Replicated Data Types for eventual consistency.
  * Per ADR-002 / ADR-005.
  */

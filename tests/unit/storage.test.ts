@@ -1,5 +1,5 @@
 /**
- * Tests for VibeCast Storage Bounded Context
+ * Tests for Driftbase Storage Bounded Context
  */
 import { describe, it, expect, beforeEach } from 'vitest';
 import { StorageEngine, WALSegment, Table } from '../../src/storage/index.js';

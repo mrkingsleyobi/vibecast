@@ -1,5 +1,5 @@
 /**
- * VibeCast Query Engine — Bounded Context
+ * Driftbase Query Engine — Bounded Context
  * SQL parsing, vector indexing (HNSW), and hybrid query execution.
  * ADR-001: sub-100us vector search target for 1M vectors
  * ADR-003: hybrid queries combining vector search with relational filters
